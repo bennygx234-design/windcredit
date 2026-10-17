@@ -6,19 +6,22 @@ struct WindCreditApp: App {
     @StateObject private var model = AppModel()
     @StateObject private var auth = AuthService()
 
+    init() { Appearance.apply() }
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(model)
                 .environmentObject(auth)
                 .tint(Theme.teal)
+                .font(.wcBody)
                 .onOpenURL { GIDSignIn.sharedInstance.handle($0) }
         }
     }
 }
 
-/// Decides which part of the app to show. One straight path:
-/// welcome → sign in → address → your home → your policy → results → plan.
+/// One straight path, value first:
+/// welcome → address → your home → your policy → results → save your plan → plan.
 struct RootView: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var auth: AuthService
@@ -27,12 +30,12 @@ struct RootView: View {
         Group {
             if !model.saved.hasSeenIntro {
                 WelcomeView()
+            } else if !model.saved.setupDone {
+                SetupFlow()
             } else if auth.status == .checking {
                 ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity).background(Theme.background)
             } else if !auth.isSignedIn {
                 SignInView()
-            } else if !model.saved.setupDone {
-                SetupFlow()
             } else {
                 DashboardView()
             }

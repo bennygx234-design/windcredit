@@ -9,28 +9,38 @@
 /* Begin PBXBuildFile section */
 		01ECEFD7BE9B181F421FFD0E /* oir_b1_1699.json in Resources */ = {isa = PBXBuildFile; fileRef = 69FF24A1C81DE292F14442E8 /* oir_b1_1699.json */; };
 		0267AA429B24CAD84222115B /* HomeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DF4CF40CF5B1B41A122FCF /* HomeModels.swift */; };
+		036AE8EB20A8DC0347B99FD6 /* WCText-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB9FAB8A5BE2D30EB622D2DE /* WCText-Medium.ttf */; };
 		0509280317BE05277AEBBF03 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F050FE2E6833BA98C31B98 /* WelcomeView.swift */; };
 		08F0CE4B9EF2EDBA91195155 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 4CBB2B9164E1139718D8A074 /* Supabase */; };
 		12662B13268499DF79CFB2A9 /* ReportRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B4375623E5C6955ED27E27 /* ReportRenderer.swift */; };
 		1F29056595415E11592A6644 /* PropertyLookupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E14627E2D54C0904DA915A6 /* PropertyLookupService.swift */; };
 		1FE39E4C73B970EABB5447AC /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C564F6292D22D790969C465C /* ReminderService.swift */; };
 		1FEEBC51205DB5958953ADD9 /* ChoiceCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B5BCD8AB8C2AD365E9CA88A /* ChoiceCard.swift */; };
+		2C63C56B97A85D6E4EA4D4E1 /* WCText-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CCC88AD4905DA9120830E94C /* WCText-SemiBold.ttf */; };
 		2D943B0A889BFA03651134E3 /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD1160A5BE60E18A963C2DD1 /* SignInView.swift */; };
 		378EEA49F05FBCDE2E437130 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4006FCA7403703BFCB3DC95A /* DashboardView.swift */; };
+		436C6513A615F985212E6CD6 /* NeighborhoodService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DA1770782301A5193C65B10 /* NeighborhoodService.swift */; };
 		4A6939AF496FCD9A93C6E1D7 /* ConfirmHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAC27EDA659BCDF1BF746ABE /* ConfirmHomeView.swift */; };
 		4E64BAE3A125584B34E80912 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C0D0101F904E4874CDD3036 /* Assets.xcassets */; };
 		4FC5C66E46E64779FBCEDDA7 /* papa_sfr.html in Resources */ = {isa = PBXBuildFile; fileRef = B3A66AB5ABEAA3CC65079E50 /* papa_sfr.html */; };
+		5028D29B1A088C4BABA7B03B /* OFL-Fraunces.txt in Resources */ = {isa = PBXBuildFile; fileRef = 74743F78E102A6FD7538020F /* OFL-Fraunces.txt */; };
+		5327C27E424E75E363606F81 /* WCDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36EE2D451FA3316612DBBC61 /* WCDisplay-Regular.ttf */; };
 		65248DA2B81BE47C1246B38C /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 2F66E61D758E58E8E26E7E50 /* GoogleSignInSwift */; };
 		6E049BACA0E7E0F4DB4549FC /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB52C8E4FC6FDBDBEFE2D65 /* ResultsView.swift */; };
 		7633A7A57BDBD8D0BDE808B9 /* WindCreditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A738AFA384779FFE79F4373C /* WindCreditTests.swift */; };
+		8307FC9FB8F464EFBD44F6A7 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E20C66D7E0B41B6C0DA5B /* Illustrations.swift */; };
 		833BDB289873B9ABBDF978CD /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 5747C41F9E8253FD9ED54A09 /* GoogleSignIn */; };
 		9F8A06554F1240F66F2CBCEC /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E4721940712986212D3FC0 /* AppModel.swift */; };
 		A2839D26B83D66E89F124153 /* SetupFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E86EB7E248A0BE176438E1A /* SetupFlow.swift */; };
 		BC98DCA5E3E9C2DA8955AB28 /* PolicyParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4F530F2BDE79D294443258 /* PolicyParser.swift */; };
+		C12CF1E3E44F202A4D9770C5 /* WCDisplay-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7E679C5583F4A0BBD732D296 /* WCDisplay-SemiBold.ttf */; };
 		C4AB90849E639CEDA6C5D3F9 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0E7159863C19BB86EF47EE3 /* Theme.swift */; };
+		D76CF42CEB507FA65AE27E48 /* WCText-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B945EFEFB741D581839937E3 /* WCText-Bold.ttf */; };
 		D7DE7D0BEAA73A792AC61BD4 /* DiscountEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104F2BD6CF7F914165C87442 /* DiscountEngine.swift */; };
 		DC33628F249D9552E90CDE3C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BCEA2ACFD0C80D63497BD0C /* SettingsView.swift */; };
+		DDE51B79AAF4E8A279930BF4 /* WCText-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B960A4504DF12C8295BBE73A /* WCText-Regular.ttf */; };
 		DF49D136E32D1BE424B39EA0 /* WindCreditApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB7124B3C81682B27512825 /* WindCreditApp.swift */; };
+		E3155E2BBBC11C3D33B027DF /* OFL-PlusJakartaSans.txt in Resources */ = {isa = PBXBuildFile; fileRef = 67AA516B644FEE5F8FEC5791 /* OFL-PlusJakartaSans.txt */; };
 		E5DE8426F759173D22869C5A /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CBE01B7B9C6F2D499C0129 /* AuthService.swift */; };
 		ED273D473628513F0BA8D33D /* PolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6B19A37F48F58D9F0F6E41 /* PolicyView.swift */; };
 		F1423A67CC3709AD3E2C9880 /* AddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE5B02F23B7568360DA0116 /* AddressView.swift */; };
@@ -52,15 +62,21 @@
 		2767E06824DC98EDAF867F1E /* WindCredit.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WindCredit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B5BCD8AB8C2AD365E9CA88A /* ChoiceCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChoiceCard.swift; sourceTree = "<group>"; };
 		2EB7124B3C81682B27512825 /* WindCreditApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindCreditApp.swift; sourceTree = "<group>"; };
+		36EE2D451FA3316612DBBC61 /* WCDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCDisplay-Regular.ttf"; sourceTree = "<group>"; };
+		3DA1770782301A5193C65B10 /* NeighborhoodService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborhoodService.swift; sourceTree = "<group>"; };
 		4006FCA7403703BFCB3DC95A /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		45B4375623E5C6955ED27E27 /* ReportRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportRenderer.swift; sourceTree = "<group>"; };
 		4E3D320F19BC581A91B9155C /* WindCreditTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WindCreditTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		513E20C66D7E0B41B6C0DA5B /* Illustrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Illustrations.swift; sourceTree = "<group>"; };
+		67AA516B644FEE5F8FEC5791 /* OFL-PlusJakartaSans.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OFL-PlusJakartaSans.txt"; sourceTree = "<group>"; };
 		69FF24A1C81DE292F14442E8 /* oir_b1_1699.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = oir_b1_1699.json; sourceTree = "<group>"; };
 		6AB52C8E4FC6FDBDBEFE2D65 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		6B6B19A37F48F58D9F0F6E41 /* PolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyView.swift; sourceTree = "<group>"; };
 		6BCEA2ACFD0C80D63497BD0C /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		6E14627E2D54C0904DA915A6 /* PropertyLookupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyLookupService.swift; sourceTree = "<group>"; };
 		70F050FE2E6833BA98C31B98 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		74743F78E102A6FD7538020F /* OFL-Fraunces.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OFL-Fraunces.txt"; sourceTree = "<group>"; };
+		7E679C5583F4A0BBD732D296 /* WCDisplay-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCDisplay-SemiBold.ttf"; sourceTree = "<group>"; };
 		8C0D0101F904E4874CDD3036 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8DE5B02F23B7568360DA0116 /* AddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressView.swift; sourceTree = "<group>"; };
 		94E4721940712986212D3FC0 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
@@ -68,14 +84,18 @@
 		9C4F530F2BDE79D294443258 /* PolicyParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolicyParser.swift; sourceTree = "<group>"; };
 		A738AFA384779FFE79F4373C /* WindCreditTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindCreditTests.swift; sourceTree = "<group>"; };
 		B3A66AB5ABEAA3CC65079E50 /* papa_sfr.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = papa_sfr.html; sourceTree = "<group>"; };
+		B945EFEFB741D581839937E3 /* WCText-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCText-Bold.ttf"; sourceTree = "<group>"; };
+		B960A4504DF12C8295BBE73A /* WCText-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCText-Regular.ttf"; sourceTree = "<group>"; };
 		BB631BD8E4A8D8442BA364DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C0E7159863C19BB86EF47EE3 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		C564F6292D22D790969C465C /* ReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
+		CCC88AD4905DA9120830E94C /* WCText-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCText-SemiBold.ttf"; sourceTree = "<group>"; };
 		D16E2D6F5340B2811635143B /* WindCredit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WindCredit.entitlements; sourceTree = "<group>"; };
 		EAC27EDA659BCDF1BF746ABE /* ConfirmHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmHomeView.swift; sourceTree = "<group>"; };
 		F8CBE01B7B9C6F2D499C0129 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		FB9FAB8A5BE2D30EB622D2DE /* WCText-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCText-Medium.ttf"; sourceTree = "<group>"; };
 		FD1160A5BE60E18A963C2DD1 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
-		"TEMP_84075728-C091-4BA9-BD54-CC06574A1AD4" /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		"TEMP_3F6703B9-2128-4430-8988-B88488C9226B" /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,11 +184,27 @@
 			path = WindCredit;
 			sourceTree = "<group>";
 		};
+		9A46FF09A142CDE1DB215ECF /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				74743F78E102A6FD7538020F /* OFL-Fraunces.txt */,
+				67AA516B644FEE5F8FEC5791 /* OFL-PlusJakartaSans.txt */,
+				36EE2D451FA3316612DBBC61 /* WCDisplay-Regular.ttf */,
+				7E679C5583F4A0BBD732D296 /* WCDisplay-SemiBold.ttf */,
+				B945EFEFB741D581839937E3 /* WCText-Bold.ttf */,
+				FB9FAB8A5BE2D30EB622D2DE /* WCText-Medium.ttf */,
+				B960A4504DF12C8295BBE73A /* WCText-Regular.ttf */,
+				CCC88AD4905DA9120830E94C /* WCText-SemiBold.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
 		9E2C0F33D0A29AF43B8F06C5 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				8C0D0101F904E4874CDD3036 /* Assets.xcassets */,
 				69FF24A1C81DE292F14442E8 /* oir_b1_1699.json */,
+				9A46FF09A142CDE1DB215ECF /* Fonts */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -214,6 +250,7 @@
 				94E4721940712986212D3FC0 /* AppModel.swift */,
 				F8CBE01B7B9C6F2D499C0129 /* AuthService.swift */,
 				104F2BD6CF7F914165C87442 /* DiscountEngine.swift */,
+				3DA1770782301A5193C65B10 /* NeighborhoodService.swift */,
 				9C4F530F2BDE79D294443258 /* PolicyParser.swift */,
 				6E14627E2D54C0904DA915A6 /* PropertyLookupService.swift */,
 				C564F6292D22D790969C465C /* ReminderService.swift */,
@@ -225,15 +262,16 @@
 			isa = PBXGroup;
 			children = (
 				2B5BCD8AB8C2AD365E9CA88A /* ChoiceCard.swift */,
+				513E20C66D7E0B41B6C0DA5B /* Illustrations.swift */,
 				C0E7159863C19BB86EF47EE3 /* Theme.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
 		};
-		"TEMP_8381D617-FAE4-4E02-B5A2-6E2952EB1E4F" /* WindCredit */ = {
+		"TEMP_4CCD3E4E-C251-45E5-8BF2-9E07E9B91FCF" /* WindCredit */ = {
 			isa = PBXGroup;
 			children = (
-				"TEMP_84075728-C091-4BA9-BD54-CC06574A1AD4" /* Config.xcconfig */,
+				"TEMP_3F6703B9-2128-4430-8988-B88488C9226B" /* Config.xcconfig */,
 			);
 			path = WindCredit;
 			sourceTree = "<group>";
@@ -323,6 +361,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E64BAE3A125584B34E80912 /* Assets.xcassets in Resources */,
+				5028D29B1A088C4BABA7B03B /* OFL-Fraunces.txt in Resources */,
+				E3155E2BBBC11C3D33B027DF /* OFL-PlusJakartaSans.txt in Resources */,
+				5327C27E424E75E363606F81 /* WCDisplay-Regular.ttf in Resources */,
+				C12CF1E3E44F202A4D9770C5 /* WCDisplay-SemiBold.ttf in Resources */,
+				D76CF42CEB507FA65AE27E48 /* WCText-Bold.ttf in Resources */,
+				036AE8EB20A8DC0347B99FD6 /* WCText-Medium.ttf in Resources */,
+				DDE51B79AAF4E8A279930BF4 /* WCText-Regular.ttf in Resources */,
+				2C63C56B97A85D6E4EA4D4E1 /* WCText-SemiBold.ttf in Resources */,
 				01ECEFD7BE9B181F421FFD0E /* oir_b1_1699.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,6 +396,8 @@
 				378EEA49F05FBCDE2E437130 /* DashboardView.swift in Sources */,
 				D7DE7D0BEAA73A792AC61BD4 /* DiscountEngine.swift in Sources */,
 				0267AA429B24CAD84222115B /* HomeModels.swift in Sources */,
+				8307FC9FB8F464EFBD44F6A7 /* Illustrations.swift in Sources */,
+				436C6513A615F985212E6CD6 /* NeighborhoodService.swift in Sources */,
 				BC98DCA5E3E9C2DA8955AB28 /* PolicyParser.swift in Sources */,
 				ED273D473628513F0BA8D33D /* PolicyView.swift in Sources */,
 				1F29056595415E11592A6644 /* PropertyLookupService.swift in Sources */,
@@ -444,7 +492,7 @@
 		};
 		7A45CD1D118DC837FBDE2E96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = "TEMP_84075728-C091-4BA9-BD54-CC06574A1AD4" /* Config.xcconfig */;
+			baseConfigurationReference = "TEMP_3F6703B9-2128-4430-8988-B88488C9226B" /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WindCredit/WindCredit.entitlements;
@@ -463,7 +511,7 @@
 		};
 		981363C41971C5C5FB01EFFC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = "TEMP_84075728-C091-4BA9-BD54-CC06574A1AD4" /* Config.xcconfig */;
+			baseConfigurationReference = "TEMP_3F6703B9-2128-4430-8988-B88488C9226B" /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = WindCredit/WindCredit.entitlements;

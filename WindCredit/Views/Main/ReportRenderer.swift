@@ -24,11 +24,11 @@ private struct ReportPage: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("WindCredit").font(.system(size: 26, weight: .semibold, design: .serif)).foregroundStyle(Color(hex: 0x0E7C7B))
+                Text("WindCredit").font(.custom("WCDisplay-SemiBold", size: 28)).foregroundStyle(Color(hex: 0x0E7C7B))
                 Spacer()
-                Text(Date.now.formatted(date: .long, time: .omitted)).font(.caption)
+                Text(Date.now.formatted(date: .long, time: .omitted)).font(.custom("WCText-Regular", size: 10))
             }
-            Text("Wind-mitigation discount review").font(.system(size: 18, design: .serif))
+            Text("Wind-mitigation discount review").font(.custom("WCDisplay-Regular", size: 19))
             if let r = model.saved.record {
                 Group {
                     row("Address", r.displayAddress)
@@ -38,32 +38,32 @@ private struct ReportPage: View {
                 }
             }
             Divider()
-            Text("Owner-reported features").font(.headline)
+            Text("Owner-reported features").font(.custom("WCText-SemiBold", size: 14))
             row("Roof shape", model.saved.home.roofShape.title)
             row("Roof-to-wall", model.saved.home.roofToWall.title)
             row("Window protection", model.saved.home.openings.title)
             row("Roof after 2002", model.saved.home.roofMeetsCode.title)
             Divider()
             if let e = model.estimate {
-                Text("Estimated missed savings: \(model.savingsText) per year").font(.headline)
+                Text("Estimated missed savings: \(model.savingsText) per year").font(.custom("WCText-SemiBold", size: 14))
                 ForEach(e.missing) { m in row(m.title, "up to \(AppModel.money(m.yearlyHigh))") }
                 row("Credit now → possible", "\(pct(e.creditNow)) → \(pct(e.creditPossible))")
             }
             Divider()
-            Text("Request: please review my policy for Florida wind-mitigation credits under Fla. Stat. 627.0629. I'm scheduling a Uniform Mitigation Verification Inspection (OIR-B1-1802) and will send the completed form.")
-                .font(.callout)
+            Text("Request: please review my policy for Florida wind-mitigation credits under Fla. Stat. 627.0629. I’m scheduling a Uniform Mitigation Verification Inspection (OIR-B1-1802) and will send the completed form.")
+                .font(.custom("WCText-Regular", size: 12.5))
             Spacer()
             Text("Estimate only, based on the Florida OIR-B1-1699 credit table and Palm Beach County public records. Not an insurance quote.")
-                .font(.caption2).foregroundStyle(.secondary)
+                .font(.custom("WCText-Regular", size: 9)).foregroundStyle(.secondary)
         }
         .padding(48)
-        .background(Color.white)
+        .background(Color(hex: 0xFBF8F3))
         .foregroundStyle(Color.black)
         .environment(\.colorScheme, .light)
     }
 
     private func row(_ k: String, _ v: String) -> some View {
-        HStack { Text(k).foregroundStyle(.secondary); Spacer(); Text(v) }.font(.callout)
+        HStack { Text(k).foregroundStyle(.secondary); Spacer(); Text(v) }.font(.custom("WCText-Regular", size: 12.5))
     }
 
     private func pct(_ v: Double) -> String { v.formatted(.percent.precision(.fractionLength(0))) }

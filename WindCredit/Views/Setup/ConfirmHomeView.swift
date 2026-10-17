@@ -12,7 +12,7 @@ struct ConfirmHomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 ScreenHeader(step: "Step 2 of 3", title: "Your home",
-                             subtitle: "Here's what public records say. Check the four questions below; \"Not sure\" is fine.")
+                             subtitle: "Here’s what public records say. Check the four questions below; “Not sure” is fine.")
                 if let r = model.saved.record {
                     recordCard(r)
                     if r.isCondo { condoNote }
@@ -26,9 +26,9 @@ struct ConfirmHomeView: View {
                     }
                 }
 
-                question("How is the roof tied to the walls?", hint: "It's on your wind-mitigation report if you've had one. Otherwise pick Not sure.") {
+                question("How is the roof tied to the walls?", hint: "It’s on your wind-mitigation report if you’ve had one. Otherwise pick Not sure.") {
                     ForEach(RoofToWall.allCases) { r in
-                        ChoiceCard(title: r.title, detail: r.detail, art: .strap(r), selected: model.saved.home.roofToWall == r) {
+                        ChoiceCard(title: r.title, detail: r.detail, art: .connection(r), selected: model.saved.home.roofToWall == r) {
                             model.saved.home.roofToWall = r
                         }
                     }
@@ -45,8 +45,8 @@ struct ConfirmHomeView: View {
                 if !(model.saved.record?.isNewConstruction ?? false) {
                     question("Was the roof put on or replaced after 2002?", hint: "Newer roofs meet the stronger Florida Building Code.") {
                         ForEach(YesNoUnsure.allCases) { v in
-                            ChoiceCard(title: v.title, detail: v == .yes ? "Permit after March 2002" : v == .no ? "Original or older roof" : "We'll assume no",
-                                       art: .symbol(v == .yes ? "checkmark.circle" : v == .no ? "xmark.circle" : "questionmark.circle"),
+                            ChoiceCard(title: v.title, detail: v == .yes ? "Permit after March 2002" : v == .no ? "Original or older roof" : "We’ll assume no",
+                                       art: .roofAge(v),
                                        selected: model.saved.home.roofMeetsCode == v) {
                                 model.saved.home.roofMeetsCode = v
                             }
@@ -72,7 +72,7 @@ struct ConfirmHomeView: View {
 
     private var hintText: String? {
         guard let r = model.saved.record, !r.roofStructureText.isEmpty else { return "Look at your house from the street or the satellite view above." }
-        return "County records say \"\(r.roofStructureText.capitalized)\". Check the satellite view above."
+        return "County records say “\(r.roofStructureText.capitalized)”. Check the satellite view above."
     }
 
     private func recordCard(_ r: PropertyRecord) -> some View {
@@ -82,32 +82,33 @@ struct ConfirmHomeView: View {
             }
             .mapStyle(.imagery)
             .frame(height: 170)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .allowsHitTesting(false)
             .accessibilityLabel("Satellite view of your roof")
 
-            Text(r.displayAddress).font(.headline).foregroundStyle(Theme.ink)
+            Text(r.displayAddress).font(.wcHeadingSmall).foregroundStyle(Theme.ink)
             InfoRow(label: "Year built", value: r.yearBuilt.map(String.init) ?? "Not listed")
             InfoRow(label: "Roof cover", value: r.roofCover == .unknown ? "Not listed" : r.roofCover.title)
             InfoRow(label: "Living area", value: r.livingArea.map { "\($0.formatted()) sq ft" } ?? "Not listed")
             InfoRow(label: "Homestead", value: r.homestead ? "Yes" : "No")
-            Text("Source: Palm Beach County Property Appraiser")
-                .font(.caption2).foregroundStyle(Theme.muted)
+            Text(r.isSample ? "Sample home for testing" : "Source: Palm Beach County Property Appraiser")
+                .font(.wcCaption).foregroundStyle(Theme.muted)
         }
     }
 
     private var condoNote: some View {
-        Label("This looks like a condo. Wind discounts usually go on the building's association policy, so your savings may be smaller.",
+        Label("This looks like a condo. Wind discounts usually go on the building’s association policy, so your savings may be smaller.",
               systemImage: "building.2")
-            .font(.subheadline).foregroundStyle(Theme.ink)
+            .font(.wcSub).foregroundStyle(Theme.ink)
             .padding(14)
             .background(Theme.mist, in: RoundedRectangle(cornerRadius: 14))
     }
 
     private func question<Content: View>(_ title: String, hint: String?, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(title).font(Theme.serif(21)).foregroundStyle(Theme.ink)
-            if let hint { Text(hint).font(.footnote).foregroundStyle(Theme.muted) }
+            Text(title).font(.wcHeading).foregroundStyle(Theme.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            if let hint { Text(hint).font(.wcSub).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true) }
             LazyVGrid(columns: columns, spacing: 12) { content() }
         }
     }

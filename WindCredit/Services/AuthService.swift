@@ -23,7 +23,7 @@ enum AppConfig {
 @MainActor
 final class AuthService: ObservableObject {
     enum Status: Equatable {
-        case checking, signedOut, signedIn(name: String), demo
+        case checking, signedOut, signedIn(name: String), local
     }
 
     @Published private(set) var status: Status = .checking
@@ -39,15 +39,15 @@ final class AuthService: ObservableObject {
         } else {
             client = nil
         }
-        if UserDefaults.standard.bool(forKey: "demoMode") { status = .demo; return }
+        if UserDefaults.standard.bool(forKey: "localMode") { status = .local; return }
         Task { await restore() }
     }
 
     var isSignedIn: Bool {
-        switch status { case .signedIn, .demo: true; default: false }
+        switch status { case .signedIn, .local: true; default: false }
     }
     var displayName: String {
-        switch status { case .signedIn(let n): n; case .demo: "Demo mode"; default: "" }
+        switch status { case .signedIn(let n): n; case .local: "Not signed in"; default: "" }
     }
 
     private func restore() async {
@@ -66,7 +66,7 @@ final class AuthService: ObservableObject {
     }
 
     func finishApple(_ result: Result<ASAuthorization, Error>) async {
-        guard let client else { errorMessage = "Sign-in isn't set up yet. Use demo mode for now."; return }
+        guard let client else { notAvailable("Apple"); return }
         do {
             guard let cred = try result.get().credential as? ASAuthorizationAppleIDCredential,
                   let tokenData = cred.identityToken, let token = String(data: tokenData, encoding: .utf8)
@@ -83,17 +83,14 @@ final class AuthService: ObservableObject {
         } catch let e as ASAuthorizationError where e.code == .canceled {
             return
         } catch {
-            errorMessage = "Apple sign-in didn't work. Try again."
+            errorMessage = "Apple sign-in didn’t work. Try again."
         }
     }
 
     // MARK: Google
 
     func signInWithGoogle() async {
-        guard let client, AppConfig.isGoogleConfigured else {
-            errorMessage = "Google sign-in isn't set up yet. Use demo mode for now."
-            return
-        }
+        guard let client, AppConfig.isGoogleConfigured else { notAvailable("Google"); return }
         guard let root = UIApplication.shared.connectedScenes.compactMap({ ($0 as? UIWindowScene)?.keyWindow }).first?.rootViewController
         else { return }
         do {
@@ -108,19 +105,27 @@ final class AuthService: ObservableObject {
         } catch let e as GIDSignInError where e.code == .canceled {
             return
         } catch {
-            errorMessage = "Google sign-in didn't work. Try again."
+            errorMessage = "Google sign-in didn’t work. Try again."
         }
     }
 
-    // MARK: Demo, sign out, delete
+    // MARK: No account, sign out, delete
 
-    func continueInDemoMode() {
-        UserDefaults.standard.set(true, forKey: "demoMode")
-        status = .demo
+    /// Accounts are optional (App Store 5.1.1): the plan can live only on this phone.
+    func continueWithoutAccount() {
+        UserDefaults.standard.set(true, forKey: "localMode")
+        status = .local
+    }
+
+    /// Test builds without sign-in keys: say so plainly, then keep the plan on the phone.
+    @Published var continueLocallyAfterAlert = false
+    private func notAvailable(_ provider: String) {
+        errorMessage = "\(provider) sign-in isn’t turned on in this test build. Your plan will be saved on this phone."
+        continueLocallyAfterAlert = true
     }
 
     func signOut() async {
-        UserDefaults.standard.set(false, forKey: "demoMode")
+        UserDefaults.standard.set(false, forKey: "localMode")
         GIDSignIn.sharedInstance.signOut()
         try? await client?.auth.signOut()
         status = .signedOut

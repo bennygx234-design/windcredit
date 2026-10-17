@@ -65,6 +65,15 @@ final class DiscountEngineTests: XCTestCase {
         XCTAssertEqual(e.missedHigh, 1_050)
     }
 
+    func testNotSureShowsWhatIfInsteadOfGoodNews() throws {
+        let policy = PolicyInfo(totalPremium: 5_716, hurricanePremium: 3_912)
+        let e = try XCTUnwrap(engine.estimate(record: .sample, home: MitigationFeatures(), policy: policy))
+        XCTAssertFalse(e.hasSavings)
+        let w = engine.whatIf(record: .sample, home: MitigationFeatures(), policy: policy)
+        XCTAssertEqual(Set(w.map(\.id)), ["hip", "roofToWall", "openings"])
+        XCTAssertEqual(w.first?.id, "hip") // hip is worth the most on its own
+    }
+
     func testGrantEligibility() {
         var p = PolicyInfo(totalPremium: 5_000)
         p.dwellingCoverage = 400_000
@@ -141,8 +150,16 @@ final class PropertyLookupTests: XCTestCase {
 
     func testDisplayAddress() {
         var r = PropertyRecord.sample
+        r.parcelID = "06424736010470011"
         r.address = "1398 SW 18TH ST, BOCA RATON, 33486"
         XCTAssertEqual(r.displayAddress, "1398 SW 18th St, Boca Raton, 33486")
+        XCTAssertEqual(r.streetName, "SW 18th St")
+    }
+
+    func testNeighborhoodEstimate() {
+        let n = Neighborhood(homes: 369, olderHomes: 354)
+        XCTAssertEqual(n.olderShare, 354.0 / 369.0, accuracy: 0.0001)
+        XCTAssertEqual(n.dollarsIfQuarterMissing(perHome: 850), 75_250) // 354 × 0.25 × 850 = 75,225 → nearest $50
     }
 
     func testRoofShapeHint() {

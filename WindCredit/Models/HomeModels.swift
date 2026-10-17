@@ -18,7 +18,7 @@ enum RoofShape: String, Codable, CaseIterable, Identifiable {
         case .hip: "Slopes down on all four sides"
         case .gable: "Triangle ends on two sides"
         case .flat: "Flat or nearly flat"
-        case .notSure: "We'll assume no credit"
+        case .notSure: "We’ll assume no credit"
         }
     }
 }
@@ -66,7 +66,7 @@ enum OpeningProtection: String, Codable, CaseIterable, Identifiable {
         case .hurricane: "On every window and glass door"
         case .basic: "Rated, but not for large debris"
         case .none: "Plywood earns no credit"
-        case .notSure: "We'll assume no credit"
+        case .notSure: "We’ll assume no credit"
         }
     }
     var tableKey: String {
@@ -145,10 +145,19 @@ struct PropertyRecord: Codable, Equatable {
 
     var roofCover: RoofCover { RoofCover.fromAppraiser(roofCoverText) }
 
+    /// Street name only (no house number), for sharing without exposing the exact address.
+    var streetName: String {
+        let words = (address.components(separatedBy: ",").first ?? address).split(separator: " ").map(String.init)
+        let name = words.first?.allSatisfy(\.isNumber) == true ? Array(words.dropFirst()) : words
+        return Self.prettify(name.joined(separator: " "))
+    }
+
     /// "1398 SW 18TH ST, BOCA RATON" → "1398 SW 18th St, Boca Raton" (plain .capitalized gives "Sw 18Th").
-    var displayAddress: String {
+    var displayAddress: String { isSample ? address : Self.prettify(address) }
+
+    static func prettify(_ text: String) -> String {
         let directions: Set<String> = ["N", "S", "E", "W", "NE", "NW", "SE", "SW"]
-        return address.split(separator: " ").map { raw -> String in
+        return text.split(separator: " ").map { raw -> String in
             let word = String(raw)
             let core = word.trimmingCharacters(in: .punctuationCharacters).uppercased()
             if directions.contains(core) { return word.uppercased() }
@@ -157,7 +166,6 @@ struct PropertyRecord: Codable, Equatable {
         }.joined(separator: " ")
     }
 
-    /// The appraiser's roof-structure field is only a hint (it can say "GABLE/HIP" or "WOOD TRUSS").
     var roofShapeHint: RoofShape {
         let t = roofStructureText.uppercased()
         if t.contains("HIP") && !t.contains("GABLE") { return .hip }
@@ -172,11 +180,14 @@ struct PropertyRecord: Codable, Equatable {
         return !isCondo && (u.contains("SINGLE") || u.contains("TOWNHOUSE") || u.contains("SFR"))
     }
 
+    var isSample: Bool { parcelID == PropertyRecord.sample.parcelID }
+
+    /// A typical 1993 Boca home for demos and judges outside Palm Beach County (not a real owner's record).
     static let sample = PropertyRecord(
-        parcelID: "06424736010470011", address: "1398 SW 18th St, Boca Raton", municipality: "BOCA RATON",
+        parcelID: "SAMPLE-HOME", address: "Sample home, Boca Raton", municipality: "BOCA RATON",
         useDescription: "SINGLE FAMILY", yearBuilt: 1993, roofCoverText: "CONCRETE TILE",
         roofStructureText: "GABLE/HIP", livingArea: 1776, marketValue: 683_966, homestead: true,
-        isCondo: false, latitude: 26.331707, longitude: -80.113893)
+        isCondo: false, latitude: 26.33195, longitude: -80.11389)
 }
 
 // MARK: - The policy, from the declarations page

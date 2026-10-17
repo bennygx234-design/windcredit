@@ -10,9 +10,9 @@ struct PropertyLookupService {
         case notFound, outsideCounty, network
         var errorDescription: String? {
             switch self {
-            case .notFound: "We couldn't find that address in county records. Check the house number and street."
+            case .notFound: "We couldn’t find that address in county records. Check the house number and street."
             case .outsideCounty: "WindCredit covers Palm Beach County homes for now."
-            case .network: "Couldn't reach county records. Check your connection and try again."
+            case .network: "Couldn’t reach county records. Check your connection and try again."
             }
         }
     }

@@ -24,7 +24,7 @@ struct PolicyView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 ScreenHeader(step: "Step 3 of 3", title: "Your policy",
-                             subtitle: "Scan the declarations page: the summary page of your home insurance. It's read on your phone and never uploaded.")
+                             subtitle: "Scan the declarations page: the summary page of your home insurance. It’s read on your phone and never uploaded.")
 
                 HStack(spacing: 12) {
                     if VNDocumentCameraViewController.isSupported {
@@ -38,16 +38,21 @@ struct PolicyView: View {
                     .accessibilityIdentifier("pickPhoto")
                 }
 
+                if model.saved.record?.isSample == true && !scanned {
+                    Button { useSample() } label: { Label("Use the sample policy", systemImage: "doc.text") }
+                        .buttonStyle(PillButtonStyle())
+                        .accessibilityIdentifier("samplePolicy")
+                }
                 if isReading {
-                    HStack(spacing: 12) { ProgressView(); Text("Reading your page…").foregroundStyle(Theme.muted) }
+                    HStack(spacing: 12) { ProgressView(); Text("Reading your page…").font(.wcSub).foregroundStyle(Theme.muted) }
                 }
                 if let message {
-                    Label(message, systemImage: scanned ? "checkmark.circle" : "info.circle")
-                        .font(.subheadline).foregroundStyle(scanned ? Theme.teal : Theme.muted)
+                    Label(message, systemImage: scanned ? "checkmark.circle.fill" : "info.circle")
+                        .font(.wcSub).foregroundStyle(scanned ? Theme.tealDeep : Theme.muted)
                 }
 
                 Card {
-                    Text(scanned ? "Check what we read" : "Or type it in").font(.headline).foregroundStyle(Theme.ink)
+                    Text(scanned ? "Check what we read" : "Or type it in").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
                     moneyField("Total yearly premium", text: $premiumText, id: "premiumField")
                     moneyField("Hurricane premium (if listed)", text: $windText, id: "windField")
                     moneyField("Dwelling coverage (Coverage A)", text: $dwellingText, id: "dwellingField")
@@ -58,9 +63,9 @@ struct PolicyView: View {
                 }
 
                 Card {
-                    Text("Discounts already on your policy").font(.headline).foregroundStyle(Theme.ink)
-                    Text("Turn on any your page lists. If there's no wind-mitigation section, leave these off.")
-                        .font(.footnote).foregroundStyle(Theme.muted)
+                    Text("Discounts already on your policy").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
+                    Text("Turn on any your page lists. If there’s no wind-mitigation section, leave these off.")
+                        .font(.wcSub).foregroundStyle(Theme.muted)
                     Toggle("Hip roof", isOn: binding(\.roofShape, on: .hip, off: .notSure))
                     Toggle("Roof clips or straps", isOn: Binding(
                         get: { DiscountEngine.strength(draft.creditedFeatures.roofToWall) > 0 },
@@ -115,7 +120,7 @@ struct PolicyView: View {
         isReading = true
         defer { isReading = false }
         let lines = (try? await PolicyScanner.readText(from: image)) ?? []
-        guard !lines.isEmpty else { message = "Couldn't read that photo. Try again in good light, or type the numbers."; return }
+        guard !lines.isEmpty else { message = "Couldn’t read that photo. Try again in good light, or type the numbers."; return }
         let parsed = PolicyParser.parse(lines: lines)
         draft.creditedFeatures = parsed.creditedFeatures
         draft.noMitigationSectionFound = parsed.noMitigationSectionFound
@@ -127,7 +132,18 @@ struct PolicyView: View {
         let found = [parsed.totalPremium, parsed.hurricanePremium, parsed.dwellingCoverage].compactMap { $0 }.count
         message = parsed.noMitigationSectionFound
             ? "Read \(found) amount\(found == 1 ? "" : "s"). No wind-mitigation discounts found on the page."
-            : "Read \(found) amount\(found == 1 ? "" : "s") and the discounts below. Fix anything that's off."
+            : "Read \(found) amount\(found == 1 ? "" : "s") and the discounts below. Fix anything that’s off."
+    }
+
+    private func useSample() {
+        let p = AppModel.samplePolicy
+        premiumText = String(Int(p.totalPremium ?? 0))
+        windText = String(Int(p.hurricanePremium ?? 0))
+        dwellingText = String(Int(p.dwellingCoverage ?? 0))
+        if let d = p.renewalDate { renewal = d; hasRenewal = true }
+        draft.creditedFeatures = MitigationFeatures()
+        scanned = true
+        message = "Loaded a sample policy: no wind discounts on it yet."
     }
 
     private func finish() {
@@ -151,13 +167,14 @@ struct PolicyView: View {
 
     private func moneyField(_ label: String, text: Binding<String>, id: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(label).font(.caption).foregroundStyle(Theme.muted)
+            Text(label).font(.wcCaptionStrong).foregroundStyle(Theme.muted)
             HStack {
-                Text("$").foregroundStyle(Theme.muted)
-                TextField("0", text: text).keyboardType(.numberPad).accessibilityIdentifier(id)
+                Text("$").font(.wcBodyMedium).foregroundStyle(Theme.muted)
+                TextField("0", text: text).font(.wcBodyMedium).keyboardType(.numberPad).accessibilityIdentifier(id)
             }
-            .padding(12)
-            .background(Theme.background, in: RoundedRectangle(cornerRadius: 12))
+            .padding(14)
+            .background(Theme.background, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Theme.line))
         }
     }
 }
