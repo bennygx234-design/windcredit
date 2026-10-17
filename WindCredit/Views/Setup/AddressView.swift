@@ -13,12 +13,13 @@ struct AddressView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                ScreenHeader(step: "Step 1 of 3", title: "What's your address?",
-                             subtitle: "We look up your home in Palm Beach County's public records.")
+                ScreenHeader(step: "Step 1 of 3", title: "What’s your address?",
+                             subtitle: "We look up your home in Palm Beach County’s public records.")
 
                 HStack {
                     Image(systemName: "magnifyingglass").foregroundStyle(Theme.muted)
-                    TextField("1398 SW 18th St, Boca Raton", text: $search.query)
+                    TextField("Street address in Palm Beach County", text: $search.query)
+                        .font(.wcBody)
                         .textContentType(.fullStreetAddress)
                         .autocorrectionDisabled()
                         .focused($focused)
@@ -31,13 +32,13 @@ struct AddressView: View {
                     }
                 }
                 .padding(16)
-                .background(Theme.card, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(RoundedRectangle(cornerRadius: 16).stroke(focused ? Theme.teal : Theme.mist, lineWidth: focused ? 2 : 1))
+                .background(Theme.card, in: Capsule())
+                .overlay(Capsule().stroke(focused ? Theme.teal : Theme.line, lineWidth: focused ? 2 : 1))
 
                 if isLooking {
                     HStack(spacing: 12) {
                         ProgressView()
-                        Text("Checking county records…").foregroundStyle(Theme.muted)
+                        Text("Checking county records…").font(.wcSub).foregroundStyle(Theme.muted)
                     }
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -45,17 +46,17 @@ struct AddressView: View {
 
                 if let error {
                     Label(error, systemImage: "exclamationmark.triangle")
-                        .font(.subheadline).foregroundStyle(Theme.coral)
+                        .font(.wcSub).foregroundStyle(Theme.coral)
                 }
 
                 VStack(spacing: 0) {
                     ForEach(search.results, id: \.self) { item in
                         Button { Task { await lookUp(item.title + ", " + item.subtitle) } } label: {
                             HStack(spacing: 12) {
-                                Image(systemName: "mappin.circle.fill").font(.title2).foregroundStyle(Theme.teal)
+                                Image(systemName: "mappin.circle.fill").font(.system(size: 24)).foregroundStyle(Theme.teal)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(item.title).foregroundStyle(Theme.ink)
-                                    Text(item.subtitle).font(.caption).foregroundStyle(Theme.muted)
+                                    Text(item.title).font(.wcBodyMedium).foregroundStyle(Theme.ink)
+                                    Text(item.subtitle).font(.wcCaption).foregroundStyle(Theme.muted)
                                 }
                                 Spacer()
                             }
@@ -67,6 +68,10 @@ struct AddressView: View {
                     }
                 }
                 .disabled(isLooking)
+
+                if search.results.isEmpty && !isLooking {
+                    sampleCard
+                }
             }
             .padding(20)
         }
@@ -74,6 +79,30 @@ struct AddressView: View {
         .background(Theme.background.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { focused = model.saved.record == nil }
+    }
+
+    /// For judges and testers without a Palm Beach address.
+    private var sampleCard: some View {
+        Button {
+            model.setRecord(.sample)
+            next()
+        } label: {
+            HStack(spacing: 14) {
+                HouseIllustration(shape: .gable).frame(width: 64, height: 52)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("No Palm Beach home?").font(.wcHeadline).foregroundStyle(Theme.ink)
+                    Text("Try a sample 1993 Boca house").font(.wcSub).foregroundStyle(Theme.muted)
+                }
+                Spacer()
+                Image(systemName: "arrow.right").foregroundStyle(Theme.teal)
+            }
+            .padding(16)
+            .background(Theme.card, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Theme.line, style: StrokeStyle(lineWidth: 1, dash: [5, 4])))
+        }
+        .buttonStyle(.plain)
+        .padding(.top, 12)
+        .accessibilityIdentifier("sampleHome")
     }
 
     private func lookUp(_ address: String) async {

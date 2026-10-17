@@ -39,6 +39,15 @@
 	<string>$(SUPABASE_ANON_KEY)</string>
 	<key>SUPABASE_URL</key>
 	<string>$(SUPABASE_URL)</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>WCDisplay-SemiBold.ttf</string>
+		<string>WCDisplay-Regular.ttf</string>
+		<string>WCText-Regular.ttf</string>
+		<string>WCText-Medium.ttf</string>
+		<string>WCText-SemiBold.ttf</string>
+		<string>WCText-Bold.ttf</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

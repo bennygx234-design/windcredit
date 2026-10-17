@@ -11,10 +11,15 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Account") {
-                    LabeledContent("Signed in as", value: auth.displayName)
-                    Button("Sign out") { Task { await auth.signOut(); dismiss() } }
-                }
+                Section {
+                    if case .local = auth.status {
+                        LabeledContent("Account", value: "None, saved on this phone")
+                        Button("Sign in to back up your plan") { Task { await auth.signOut(); dismiss() } }
+                    } else {
+                        LabeledContent("Signed in as", value: auth.displayName)
+                        Button("Sign out") { Task { await auth.signOut(); dismiss() } }
+                    }
+                } header: { Text("Account") }
 
                 Section("Your home") {
                     Button("Edit home and policy") {
@@ -41,15 +46,17 @@ struct SettingsView: View {
                         .accessibilityIdentifier("deleteAccount")
                         .confirmationDialog("Delete your account?", isPresented: $confirmDelete, titleVisibility: .visible) {
                             Button("Delete account", role: .destructive) { Task { await deleteAccount() } }
-                        } message: { Text("This can't be undone.") }
+                        } message: { Text("This can’t be undone.") }
                 } footer: {
                     Text("Removes your account and everything WindCredit saved, on this phone and on our server.")
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
-            .alert("Couldn't delete", isPresented: Binding(get: { deleteError != nil }, set: { if !$0 { deleteError = nil } })) {
+            .alert("Couldn’t delete", isPresented: Binding(get: { deleteError != nil }, set: { if !$0 { deleteError = nil } })) {
                 Button("OK", role: .cancel) {}
             } message: { Text(deleteError ?? "") }
         }
