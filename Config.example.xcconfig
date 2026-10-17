@@ -1,0 +1,7 @@
+// Copy to Config.xcconfig and fill in. Config.xcconfig is git-ignored.
+// Leave values empty to run in demo mode.
+// The "/$()/" trick stops xcconfig treating "//" as a comment.
+SUPABASE_URL = https:/$()/YOUR-PROJECT.supabase.co
+SUPABASE_ANON_KEY =
+GOOGLE_IOS_CLIENT_ID =
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.placeholder
