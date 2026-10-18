@@ -53,3 +53,28 @@ Not reproduced: one early run jumped back from "Your policy" to "Your home". Thr
 - **Fact-check (12 claims, primary sources):** corrected the 89% cap wording (82–84% for most existing Palm Beach homes; 89% only applies in the HVHZ), MSFH eligibility ("built before 2008", "insured value", grants are income-limited, applications open in phases), the roof-permit rule (permit on/after 3/1/2002, or original roof on a 2004+ home), plywood (no credit *at Citizens*), the clips claim (softened), the "about half" hurricane share, and the $6,323 source (OIR Stability Report, July 2026). Inspections are valid 5 years if there are no material changes.
 - **Animations:** count-up figures, staggered reveals, growing bars, neighborhood houses lighting up, bouncing checkmarks, and an animated lookup screen. All respect Reduce Motion.
 - **Code cleanup:** about 70 comments that restated the code were removed or shortened; the rest explain decisions. Duplicate helpers were removed.
+
+## v4: scored against the official rubric text (Oct 18)
+
+Official sample rubric: 6 rows, 1–5 each, 30 total. The 2026 rules add three criteria: idea quality, implementation (UX and design), and coding excellence.
+
+| Row | What a 5 requires (rubric wording) | Where WindCredit is | What decides it |
+|---|---|---|---|
+| Ideology | "Issue or need is extremely relevant" | **5.** $6,323 average premium, state law, local data. | Say it in the first 12 seconds. |
+| Impact | "Immense usage of creativity is featured as impact is explained" | **4–5.** Neighborhood card plus share with representative, grant check, payback. | Explain the community impact on camera, with your field-test result. |
+| Structure | "Video is innovative and engaging" | Not filmed yet. | VIDEO_SCRIPT.md: on-location hook, captions, real home, under 3:00. |
+| Function | "App is functional with complex features" | **5.** Live county data, on-device OCR, state-table engine, notifications, PDF, 17 tests. | Show it working on a real home without cuts that hide steps. |
+| Code | "Explanation of code indicates immense understanding" | **At risk.** Depends entirely on *you* explaining it. | CODE_TOUR.md; build YOUR_BUILD feature 1 yourself; explain one challenge in depth. |
+| UI | "App is highly innovative in design and interface" | **4–5.** Custom type, hand-drawn illustrations, animations, dark mode. | Show the animations in the demo. |
+
+### The biggest risk is the rules, not the rubric
+- **Originality:** "All coding and technical development must be done by the student."
+- **AI usage:** permitted with full disclosure, but AI "must not constitute the entirety of the technical development," and students must show "significant individual contributions and technical understanding."
+- **Access:** judges can request the app and source code; refusing means disqualification.
+
+Most of the code so far was AI-generated. The fix is real, not cosmetic:
+1. Build YOUR_BUILD.md features yourself.
+2. Learn CODE_TOUR.md until you can explain every file.
+3. Disclose accurately (SUBMISSION.md §4).
+
+No video can guarantee an award: it depends on the other entries in your district and on the judges. But a strong, honest entry that you fully understand is the best possible position.
