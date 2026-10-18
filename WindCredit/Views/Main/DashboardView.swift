@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Home screen after setup: savings, the 4-step plan, the neighborhood view, reminder, and report.
 struct DashboardView: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var auth: AuthService
@@ -9,17 +8,29 @@ struct DashboardView: View {
     @State private var pickRenewal = false
     @State private var renewalPick = Calendar.current.date(byAdding: .month, value: 3, to: .now)!
     @State private var reportURL: URL?
+    @State private var housesLit = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @ViewBuilder private var savingsFigure: some View {
+        if let e = model.estimate, e.hasSavings {
+            CountUp(values: [e.missedLow, e.missedHigh], font: .wcFigure(44), color: .white)
+        } else if let best = model.whatIf.first {
+            CountUp(values: [best.yearlyHigh], prefix: "Up to ", font: .wcFigure(44), color: .white)
+        } else {
+            Text("$0").font(.wcFigure(44)).foregroundStyle(.white)
+        }
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     greeting
-                    savingsCard
-                    planCard
-                    neighborhoodCard
-                    reminderCard
-                    reportButton
+                    savingsCard.reveal(0.05)
+                    planCard.reveal(0.15)
+                    neighborhoodCard.reveal(0.25)
+                    reminderCard.reveal(0.3)
+                    reportButton.reveal(0.35)
                 }
                 .padding(20)
             }
@@ -41,7 +52,7 @@ struct DashboardView: View {
     private var greeting: some View {
         VStack(alignment: .leading, spacing: 6) {
             Eyebrow(text: model.saved.record?.displayAddress ?? "Your home", color: Theme.muted)
-            Text("Your plan").font(.wcTitle).foregroundStyle(Theme.ink)
+            Text(auth.firstName.map { "\($0)’s plan" } ?? "Your plan").font(.wcTitle).foregroundStyle(Theme.ink)
         }
     }
 
@@ -49,7 +60,7 @@ struct DashboardView: View {
         NavigationLink { ResultsView(isSetup: false) } label: {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Likely missing each year").font(.wcSub).foregroundStyle(.white.opacity(0.85))
-                Text(model.savingsText).font(.wcFigure(44)).foregroundStyle(.white)
+                savingsFigure
                     .minimumScaleFactor(0.6).lineLimit(1)
                 HStack {
                     Text("See the details").font(.wcSubStrong).foregroundStyle(.white)
@@ -85,6 +96,8 @@ struct DashboardView: View {
                         Image(systemName: done ? "checkmark.circle.fill" : isNext ? "arrow.right.circle.fill" : "circle")
                             .font(.system(size: 22))
                             .foregroundStyle(done ? Theme.teal : isNext ? Theme.coral : Theme.line)
+                            .contentTransition(.symbolEffect(.replace))
+                            .symbolEffect(.bounce, value: done)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(step.title).font(isNext ? .wcHeadline : .wcBodyMedium)
                                 .foregroundStyle(done ? Theme.muted : Theme.ink).strikethrough(done)
@@ -155,7 +168,7 @@ struct DashboardView: View {
         }
     }
 
-    /// 40 little houses: coral = built before 2002.
+    // 40 houses, so each one is roughly 2.5% of the neighborhood.
     private func neighborhoodDots(_ n: Neighborhood) -> some View {
         let dots = 40
         let older = Int((n.olderShare * Double(dots)).rounded())
@@ -163,9 +176,11 @@ struct DashboardView: View {
             ForEach(0..<dots, id: \.self) { i in
                 Image(systemName: "house.fill")
                     .font(.system(size: 11))
-                    .foregroundStyle(i < older ? Theme.coral : Theme.teal.opacity(0.45))
+                    .foregroundStyle(i < older && housesLit ? Theme.coral : Theme.teal.opacity(0.45))
+                    .animation(reduceMotion ? nil : .easeOut(duration: 0.25).delay(0.4 + Double(i) * 0.025), value: housesLit)
             }
         }
+        .onAppear { housesLit = true }
         .accessibilityElement()
         .accessibilityLabel("\(n.olderHomes) of \(n.homes) homes built before 2002")
     }
@@ -229,7 +244,7 @@ struct DashboardView: View {
     }
 
     private var reportButton: some View {
-        Button { reportURL = ReportRenderer.makePDF(model: model) } label: {
+        Button { reportURL = ReportRenderer.makePDF(model: model, name: auth.firstName, email: auth.email) } label: {
             Label("Share report with my agent", systemImage: "square.and.arrow.up")
         }
         .buttonStyle(PrimaryButtonStyle())
@@ -239,7 +254,6 @@ struct DashboardView: View {
 
 extension URL: @retroactive Identifiable { public var id: String { absoluteString } }
 
-/// The standard iOS share sheet, for the PDF report.
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
     func makeUIViewController(context: Context) -> UIActivityViewController {

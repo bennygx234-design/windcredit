@@ -1,5 +1,4 @@
 import Foundation
-import Supabase
 
 /// Everything the user has entered, saved on the phone (and to their account when signed in).
 @MainActor
@@ -127,18 +126,6 @@ final class AppModel: ObservableObject {
 
     private func persist() {
         if let data = try? JSONEncoder().encode(saved) { UserDefaults.standard.set(data, forKey: key) }
-    }
-
-    /// Saves the home to the signed-in user's row (table `homes`, see supabase/migrations). Failures are ignored: the phone copy is the source of truth.
-    func sync(using client: SupabaseClient?) async {
-        guard let client, let user = try? await client.auth.session.user, let record = saved.record else { return }
-        struct Row: Encodable {
-            let user_id: UUID; let parcel_id: String; let address: String
-            let features: MitigationFeatures; let completed_steps: [String]; let updated_at: Date
-        }
-        let row = Row(user_id: user.id, parcel_id: record.parcelID, address: record.address, features: saved.home,
-                      completed_steps: saved.completed.map(\.rawValue), updated_at: .now)
-        _ = try? await client.from("homes").upsert(row, onConflict: "user_id").execute()
     }
 
     nonisolated static func money(_ n: Int) -> String {

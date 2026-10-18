@@ -23,7 +23,6 @@ enum RoofShape: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// How the roof is tied to the walls. Stronger ties earn bigger credits.
 enum RoofToWall: String, Codable, CaseIterable, Identifiable {
     case toeNails, clips, singleWraps, doubleWraps, notSure
     var id: String { rawValue }
@@ -45,11 +44,10 @@ enum RoofToWall: String, Codable, CaseIterable, Identifiable {
         case .notSure: "An inspector checks this in the attic"
         }
     }
-    /// Key used by the OIR table. "Not sure" counts as the weakest connection.
+    // "Not sure" gets no credit, same as toe nails.
     var tableKey: String { self == .notSure ? RoofToWall.toeNails.rawValue : rawValue }
 }
 
-/// Protection on windows and doors.
 enum OpeningProtection: String, Codable, CaseIterable, Identifiable {
     case hurricane, basic, none, notSure
     var id: String { rawValue }
@@ -65,7 +63,7 @@ enum OpeningProtection: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .hurricane: "On every window and glass door"
         case .basic: "Rated, but not for large debris"
-        case .none: "Plywood earns no credit"
+        case .none: "Citizens gives plywood no credit"
         case .notSure: "We’ll assume no credit"
         }
     }
@@ -91,7 +89,6 @@ enum RoofCover: String, Codable, CaseIterable {
         }
     }
 
-    /// Maps the Property Appraiser's "Roof Cover" text to a type.
     static func fromAppraiser(_ text: String) -> RoofCover {
         let t = text.uppercased()
         if t.contains("TILE") { return .tile }
@@ -115,14 +112,13 @@ enum YesNoUnsure: String, Codable, CaseIterable, Identifiable {
     }
 }
 
-/// The features a home has (or that a policy already credits).
 struct MitigationFeatures: Codable, Equatable {
     var roofShape: RoofShape = .notSure
     var roofToWall: RoofToWall = .notSure
     var openings: OpeningProtection = .notSure
-    /// Roof covering installed or replaced after March 1, 2002, so it meets the Florida Building Code.
+    // Roof put on after March 1, 2002 counts as meeting the Florida Building Code.
     var roofMeetsCode: YesNoUnsure = .notSure
-    /// Secondary water resistance (a sealed roof deck under the shingles or tiles).
+    // SWR = secondary water resistance (sealed roof deck).
     var sealedRoofDeck: YesNoUnsure = .notSure
 }
 
@@ -145,14 +141,13 @@ struct PropertyRecord: Codable, Equatable {
 
     var roofCover: RoofCover { RoofCover.fromAppraiser(roofCoverText) }
 
-    /// Street name only (no house number), for sharing without exposing the exact address.
     var streetName: String {
         let words = (address.components(separatedBy: ",").first ?? address).split(separator: " ").map(String.init)
         let name = words.first?.allSatisfy(\.isNumber) == true ? Array(words.dropFirst()) : words
         return Self.prettify(name.joined(separator: " "))
     }
 
-    /// "1398 SW 18TH ST, BOCA RATON" → "1398 SW 18th St, Boca Raton" (plain .capitalized gives "Sw 18Th").
+    // .capitalized turns "SW 18TH" into "Sw 18Th", so do it by hand.
     var displayAddress: String { isSample ? address : Self.prettify(address) }
 
     static func prettify(_ text: String) -> String {
@@ -182,7 +177,7 @@ struct PropertyRecord: Codable, Equatable {
 
     var isSample: Bool { parcelID == PropertyRecord.sample.parcelID }
 
-    /// A typical 1993 Boca home for demos and judges outside Palm Beach County (not a real owner's record).
+    // Made-up 1993 Boca house for demos. Not a real owner's record.
     static let sample = PropertyRecord(
         parcelID: "SAMPLE-HOME", address: "Sample home, Boca Raton", municipality: "BOCA RATON",
         useDescription: "SINGLE FAMILY", yearBuilt: 1993, roofCoverText: "CONCRETE TILE",
@@ -197,9 +192,8 @@ struct PolicyInfo: Codable, Equatable {
     var hurricanePremium: Double?
     var dwellingCoverage: Double?
     var renewalDate: Date?
-    /// Credits the insurer already gives (read from the declarations page, then confirmed by the user).
+    // What the insurer already credits, per the declarations page.
     var creditedFeatures = MitigationFeatures()
-    /// True when the declarations page showed no wind-mitigation section at all.
     var noMitigationSectionFound = false
 }
 
@@ -220,7 +214,7 @@ enum PlanStep: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .confirmHome: "Roof shape, straps and windows"
         case .scanPolicy: "So we know what you already get"
-        case .bookInspection: "About $100–$200, or free through My Safe Florida Home"
+        case .bookInspection: "About $100–$200, or free through My Safe Florida Home if eligible. Good for 5 years."
         case .sendToAgent: "Credits start once your insurer has the form"
         }
     }

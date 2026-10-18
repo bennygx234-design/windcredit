@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A tappable picture choice used on the "Your home" questions.
 struct ChoiceCard: View {
     let title: String
     let detail: String
@@ -29,9 +28,11 @@ struct ChoiceCard: View {
             .overlay(alignment: .topTrailing) {
                 if selected {
                     Image(systemName: "checkmark.circle.fill").font(.system(size: 20)).foregroundStyle(Theme.teal).padding(10)
+                        .transition(.scale(scale: 0.4).combined(with: .opacity))
                 }
             }
-            .animation(.easeOut(duration: 0.15), value: selected)
+            .scaleEffect(selected ? 1 : 0.985)
+            .animation(.spring(duration: 0.35, bounce: 0.35), value: selected)
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)

@@ -2,8 +2,7 @@ import Foundation
 import UIKit
 import Vision
 
-/// Reads a photo of an insurance declarations page (the summary page of a policy) on the phone.
-/// Nothing is uploaded: Apple's Vision framework does the reading on-device.
+// OCR runs on-device with Vision. The photo never leaves the phone.
 enum PolicyScanner {
     static func readText(from image: UIImage) async throws -> [String] {
         guard let cg = image.cgImage else { return [] }
@@ -12,7 +11,7 @@ enum PolicyScanner {
                 if let err { cont.resume(throwing: err); return }
                 let lines = (req.results as? [VNRecognizedTextObservation] ?? [])
                     .sorted { a, b in
-                        // Top-to-bottom, then left-to-right (Vision's y axis starts at the bottom).
+                        // Vision's y axis starts at the bottom
                         abs(a.boundingBox.midY - b.boundingBox.midY) > 0.01
                             ? a.boundingBox.midY > b.boundingBox.midY : a.boundingBox.minX < b.boundingBox.minX
                     }
@@ -29,8 +28,7 @@ enum PolicyScanner {
     }
 }
 
-/// Turns the declarations-page text into numbers and credits.
-/// Every insurer formats its page differently, so this looks for labels and the dollar amount next to them.
+// Every insurer lays out the page differently, so look for labels and grab the amount next to them.
 enum PolicyParser {
     static func parse(lines: [String]) -> PolicyInfo {
         var info = PolicyInfo()
@@ -43,7 +41,7 @@ enum PolicyParser {
 
         let all = upper.joined(separator: "\n")
         var f = MitigationFeatures()
-        // Roof shape: only credit "HIP" when it's on a roof line, not part of another word.
+        // only trust HIP when it's on a line that mentions the roof
         if line(in: upper, containsAll: ["ROOF"], any: ["HIP"]) != nil, !all.contains("NON-HIP") { f.roofShape = .hip }
         else if line(in: upper, containsAll: ["ROOF"], any: ["GABLE", "OTHER"]) != nil { f.roofShape = .gable }
 
@@ -71,7 +69,7 @@ enum PolicyParser {
 
     // MARK: Helpers
 
-    /// The first dollar amount on the line with a label, or on the next line (some pages put it below).
+    // some pages put the amount on the line below the label
     static func amount(after labels: [String], in lines: [String], excluding: [String] = []) -> Double? {
         for label in labels {
             for (i, l) in lines.enumerated() where l.contains(label) && !excluding.contains(where: { l.contains($0) }) {
@@ -92,7 +90,7 @@ enum PolicyParser {
         var s = text[r].replacingOccurrences(of: ",", with: "")
         if let c = Range(m.range(at: 2), in: text) { s += "." + text[c] }
         guard let v = Double(s), v >= 100 else { return nil }
-        // Skip things that look like years (a lone 2026 next to a label is rarely a premium).
+        // a bare 2026 is a year, not a premium
         if (1990...2040).contains(v) && !text.contains("$") && !text.contains(",") { return nil }
         return v
     }
@@ -101,7 +99,7 @@ enum PolicyParser {
         lines.first { l in containsAll.allSatisfy { l.contains($0) } && any.contains { l.contains($0) } }
     }
 
-    /// Renewal = the end of the policy period: the later of the dates on the "policy period" or "expiration" line.
+    // renewal = later date on the policy period / expiration line
     static func renewalDate(in lines: [String]) -> Date? {
         let keyed = lines.enumerated().filter { _, l in ["POLICY PERIOD", "EXPIRATION", "EXPIRES", "TERM"].contains { l.contains($0) } }
         for (i, l) in keyed {

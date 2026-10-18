@@ -1,7 +1,6 @@
 import MapKit
 import SwiftUI
 
-/// Type an address; Apple Maps suggests matches; county records do the rest.
 struct AddressView: View {
     @EnvironmentObject var model: AppModel
     @StateObject private var search = AddressSearch()
@@ -36,12 +35,7 @@ struct AddressView: View {
                 .overlay(Capsule().stroke(focused ? Theme.teal : Theme.line, lineWidth: focused ? 2 : 1))
 
                 if isLooking {
-                    HStack(spacing: 12) {
-                        ProgressView()
-                        Text("Checking county records…").font(.wcSub).foregroundStyle(Theme.muted)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                    LookupAnimation().transition(.opacity)
                 }
 
                 if let error {
@@ -70,7 +64,7 @@ struct AddressView: View {
                 .disabled(isLooking)
 
                 if search.results.isEmpty && !isLooking {
-                    sampleCard
+                    sampleCard.reveal(0.2)
                 }
             }
             .padding(20)
@@ -81,7 +75,6 @@ struct AddressView: View {
         .onAppear { focused = model.saved.record == nil }
     }
 
-    /// For judges and testers without a Palm Beach address.
     private var sampleCard: some View {
         Button {
             model.setRecord(.sample)
@@ -122,7 +115,7 @@ struct AddressView: View {
     }
 }
 
-/// Wraps Apple's address autocomplete, limited to the Palm Beach County area.
+// MapKit autocomplete, biased toward Palm Beach County.
 @MainActor
 final class AddressSearch: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var query = "" { didSet { completer.queryFragment = query } }

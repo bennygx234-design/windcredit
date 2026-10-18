@@ -2,7 +2,6 @@ import PhotosUI
 import SwiftUI
 import VisionKit
 
-/// Scan the declarations page (or type the premium). Then the user checks what was read.
 struct PolicyView: View {
     @EnvironmentObject var model: AppModel
     let next: () -> Void
@@ -179,7 +178,6 @@ struct PolicyView: View {
     }
 }
 
-/// Apple's document camera: finds the page edges and straightens the photo.
 struct DocumentCamera: UIViewControllerRepresentable {
     let onScan: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss

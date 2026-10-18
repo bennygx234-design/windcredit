@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Coastal Clean, v2: warm sand, deep ink, ocean teal, coral for the next action.
-/// Fonts are bundled: Fraunces (headlines, dollar figures) and Plus Jakarta Sans (text),
-/// both scale with the iPhone's text-size setting.
+// Fonts: Fraunces for headlines/numbers, Plus Jakarta Sans for text (both OFL, bundled).
 enum Theme {
     static let teal = Color(light: 0x0E7C7B, dark: 0x45BDB3)
     static let tealDeep = Color(light: 0x0A5958, dark: 0x2E9C93)
@@ -19,11 +17,8 @@ enum Theme {
 // MARK: - Type scale
 
 extension Font {
-    /// Big dollar figures and hero numbers.
     static func wcFigure(_ size: CGFloat) -> Font { .custom("WCDisplay-SemiBold", size: size, relativeTo: .largeTitle) }
-    /// Screen titles.
     static let wcTitle = Font.custom("WCDisplay-SemiBold", size: 32, relativeTo: .largeTitle)
-    /// Section headings and question titles.
     static let wcHeading = Font.custom("WCDisplay-Regular", size: 22, relativeTo: .title2)
     static let wcHeadingSmall = Font.custom("WCDisplay-SemiBold", size: 19, relativeTo: .title3)
 
@@ -35,7 +30,6 @@ extension Font {
     static let wcSubStrong = Font.custom("WCText-SemiBold", size: 14.5, relativeTo: .subheadline)
     static let wcCaption = Font.custom("WCText-Regular", size: 12.5, relativeTo: .caption)
     static let wcCaptionStrong = Font.custom("WCText-SemiBold", size: 12.5, relativeTo: .caption)
-    /// Small all-caps labels ("STEP 1 OF 3").
     static let wcEyebrow = Font.custom("WCText-Bold", size: 11.5, relativeTo: .caption2)
 }
 
@@ -52,7 +46,7 @@ extension UIColor {
     }
 }
 
-/// UIKit pieces SwiftUI doesn't style (navigation titles, segmented controls).
+// Nav bar titles still come from UIKit.
 enum Appearance {
     static func apply() {
         let nav = UINavigationBarAppearance()
@@ -163,7 +157,6 @@ struct InfoRow: View {
     }
 }
 
-/// A full-width bottom area for the main button on each screen.
 struct BottomBar<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {

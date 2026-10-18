@@ -1,13 +1,12 @@
 import SwiftUI
 
-/// The payoff: dollars a year likely missed, a before/after picture, which discounts, and whether it's worth it.
 struct ResultsView: View {
     @EnvironmentObject var model: AppModel
     let isSetup: Bool
     @State private var showMath = false
     @State private var showHow = false
 
-    /// Typical Palm Beach wind-mitigation inspection price used for the payback line.
+    // middle of the $100–200 range local inspectors charge
     static let inspectionCost = 150
 
     var body: some View {
@@ -15,8 +14,8 @@ struct ResultsView: View {
             VStack(alignment: .leading, spacing: 22) {
                 if let e = model.estimate, model.needsInspectionToKnow {
                     unknownHeadline
-                    whatIfList
-                    if let g = model.grant { grantCard(g) }
+                    whatIfList.reveal(0.15)
+                    if let g = model.grant { grantCard(g).reveal(0.3) }
                     assumptions(e)
                     Button { showHow = true } label: {
                         Label("How WindCredit works", systemImage: "gearshape.2")
@@ -25,12 +24,12 @@ struct ResultsView: View {
                 } else if let e = model.estimate {
                     headline(e)
                     if e.hasSavings {
-                        premiumBars(e)
-                        payback(e)
+                        premiumBars(e).reveal(0.15)
+                        payback(e).reveal(0.25)
                     }
-                    if !e.missing.isEmpty { missingList(e) }
-                    if let g = model.grant { grantCard(g) }
-                    assumptions(e)
+                    if !e.missing.isEmpty { missingList(e).reveal(0.35) }
+                    if let g = model.grant { grantCard(g).reveal(0.45) }
+                    assumptions(e).reveal(0.5)
                     Button { showHow = true } label: {
                         Label("How WindCredit works", systemImage: "gearshape.2")
                     }
@@ -62,9 +61,7 @@ struct ResultsView: View {
         VStack(alignment: .leading, spacing: 8) {
             Eyebrow(text: e.hasSavings ? "Your estimate" : "Good news")
             if e.hasSavings {
-                Text("\(AppModel.money(e.missedLow))–\(AppModel.money(e.missedHigh))")
-                    .font(.wcFigure(54))
-                    .foregroundStyle(Theme.teal)
+                CountUp(values: [e.missedLow, e.missedHigh], font: .wcFigure(54))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .accessibilityIdentifier("savingsRange")
@@ -83,8 +80,7 @@ struct ResultsView: View {
     private var unknownHeadline: some View {
         VStack(alignment: .leading, spacing: 8) {
             Eyebrow(text: "Not sure yet")
-            Text(model.savingsText)
-                .font(.wcFigure(54)).foregroundStyle(Theme.teal)
+            CountUp(values: [model.whatIf.first?.yearlyHigh ?? 0], prefix: "Up to ", font: .wcFigure(54))
                 .minimumScaleFactor(0.5).lineLimit(1)
                 .accessibilityIdentifier("savingsRange")
             Text("a year is possible. You weren’t sure about some features, and an inspection is how you find out.")
@@ -115,14 +111,13 @@ struct ResultsView: View {
         }
     }
 
-    /// Hurricane premium now vs. with the credits (middle of the range).
     private func premiumBars(_ e: DiscountEngine.Estimate) -> some View {
         let now = e.windPremium
         let after = max(now - Double(e.missedLow + e.missedHigh) / 2, 0)
         return Card {
             Text("Hurricane part of your premium").font(.wcSubStrong).foregroundStyle(Theme.ink)
-            bar("Now", now, of: now, color: Theme.coral)
-            bar("With discounts", after, of: now, color: Theme.teal)
+            bar("Now", now, of: now, color: Theme.coral, delay: 0.3)
+            bar("With discounts", after, of: now, color: Theme.teal, delay: 0.55)
             if e.windPremiumWasAssumed {
                 Text("Estimated from your total premium. Add the hurricane premium from your policy for a sharper number.")
                     .font(.wcCaption).foregroundStyle(Theme.muted)
@@ -130,20 +125,14 @@ struct ResultsView: View {
         }
     }
 
-    private func bar(_ label: String, _ value: Double, of maxValue: Double, color: Color) -> some View {
+    private func bar(_ label: String, _ value: Double, of maxValue: Double, color: Color, delay: Double) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text(label).font(.wcCaption).foregroundStyle(Theme.muted)
                 Spacer()
                 Text(AppModel.money(Int(value))).font(.wcSubStrong).foregroundStyle(Theme.ink)
             }
-            GeometryReader { g in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Theme.sand)
-                    Capsule().fill(color).frame(width: max(12, g.size.width * value / max(maxValue, 1)))
-                }
-            }
-            .frame(height: 12)
+            GrowingBar(fraction: value / max(maxValue, 1), color: color, delay: delay)
         }
         .accessibilityElement(children: .combine)
     }
@@ -190,7 +179,7 @@ struct ResultsView: View {
 
     private func grantCard(_ g: GrantEligibility) -> some View {
         let (icon, title, body, color): (String, String, String, Color) = switch g {
-        case .likely: ("checkmark.seal.fill", "You may qualify for a free inspection", "My Safe Florida Home, the state program, offers free inspections and grants up to $10,000 for upgrades.", Theme.tealDeep)
+        case .likely: ("checkmark.seal.fill", "You may qualify for a free inspection", "My Safe Florida Home, the state program, offers free inspections. Low- and moderate-income owners can also get grants up to $10,000 for upgrades.", Theme.tealDeep)
         case .maybe(let why): ("questionmark.circle.fill", "You might qualify for My Safe Florida Home", why, Theme.ink)
         case .no(let why): ("info.circle.fill", "My Safe Florida Home probably isn’t for you", why, Theme.ink)
         }
@@ -201,7 +190,7 @@ struct ResultsView: View {
                 EmptyView()
             } else {
                 Link(destination: URL(string: "https://mysafeflhome.com")!) {
-                    Label("Check the program", systemImage: "arrow.up.right")
+                    Label("Check current status", systemImage: "arrow.up.right")
                 }
                 .buttonStyle(PillButtonStyle())
             }
@@ -212,8 +201,8 @@ struct ResultsView: View {
         DisclosureGroup(isExpanded: $showMath) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Hurricane part of your premium: \(AppModel.money(Int(e.windPremium)))\(e.windPremiumWasAssumed ? " (estimated from your total)" : "")")
-                Text("Discount now \(pct(e.creditNow)), could be \(pct(e.creditPossible)), from Florida’s official credit table (OIR-B1-1699). Discounts don’t add up: each combination of features has one credit, capped at 89%.")
-                Text("Insurers use their own, newer tables, so we show a cautious range (50–75% of the table’s number). Roof-deck nailing is assumed weakest until an inspector checks.")
+                Text("Discount now \(pct(e.creditNow)), could be \(pct(e.creditPossible)), from Florida’s official credit table (OIR-B1-1699). Discounts don’t add up: each combination of features has one credit. For most existing Palm Beach homes they top out around 82–84%.")
+                Text("The state table dates from 2006 (an update is pending), and insurers file their own, so we show a cautious range (50–75% of the table’s number). Roof-deck nailing is assumed weakest until an inspector checks. If your policy doesn’t list a hurricane premium, we estimate it at 65% of the total for pre-2002 homes and 45% for newer ones.")
                 Text("This is an estimate, not a quote. Confirm with a licensed inspector or your agent.").font(.wcSubStrong)
             }
             .font(.wcSub).foregroundStyle(Theme.muted)
@@ -229,7 +218,6 @@ struct ResultsView: View {
     private func pct(_ v: Double) -> String { v.formatted(.percent.precision(.fractionLength(0))) }
 }
 
-/// Four numbered steps naming the real sources. Also the "how the code works" shot for the video.
 struct HowItWorksSheet: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -239,7 +227,7 @@ struct HowItWorksSheet: View {
         ("doc.viewfinder", "Reads your policy on your phone",
          "Apple’s Vision text recognition reads the declarations page on the device. Nothing is uploaded. A parser finds the premiums, coverage, renewal date and any wind discounts already applied."),
         ("tablecells", "Looks up Florida’s official credit table",
-         "Every combination of roof shape, roof-to-wall ties, window protection, roof age and sealed deck has one credit in the state’s table (OIR-B1-1699). They don’t add up, and they’re capped at 89%."),
+         "Every combination of roof shape, roof-to-wall ties, window protection, roof age and sealed deck has one credit in the state’s table (OIR-B1-1699). They don’t add up; for most existing Palm Beach homes they top out around 82–84%."),
         ("chart.bar.xaxis", "Turns the gap into dollars",
          "Missed = hurricane premium × (possible credit − current credit) ÷ (1 − current credit). Shown as a cautious range because each insurer’s table is a little different."),
     ]

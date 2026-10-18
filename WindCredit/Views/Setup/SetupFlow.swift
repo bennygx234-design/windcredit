@@ -2,7 +2,6 @@ import SwiftUI
 
 enum SetupStep: Hashable { case home, policy, results }
 
-/// Address → your home → your policy → results, in one navigation stack.
 struct SetupFlow: View {
     @EnvironmentObject var model: AppModel
     @State private var path: [SetupStep] = []
@@ -19,7 +18,6 @@ struct SetupFlow: View {
                 }
         }
         .onAppear {
-            // Resume where the user left off.
             if model.saved.record != nil && path.isEmpty {
                 path = model.saved.policyDone ? [.home, .policy, .results] : [.home]
             }

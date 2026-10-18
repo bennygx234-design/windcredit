@@ -1,10 +1,7 @@
 import Foundation
 
-/// Looks up a Palm Beach County home in free public records.
-///
-/// 1. County geocoder: address → exact point on the house.
-/// 2. County parcel layer: point → parcel ID, use, condo flag, homestead.
-/// 3. Property Appraiser page: parcel ID → year built, roof cover, roof structure.
+// address → county geocoder (point) → parcel layer (parcel ID, use, homestead)
+//         → Property Appraiser page (year built, roof)
 struct PropertyLookupService {
     enum LookupError: LocalizedError {
         case notFound, outsideCounty, network
@@ -31,7 +28,7 @@ struct PropertyLookupService {
             useDescription: parcel.use, yearBuilt: nil, roofCoverText: "", roofStructureText: "",
             livingArea: nil, marketValue: parcel.market, homestead: parcel.homestead, isCondo: parcel.isCondo,
             latitude: point.lat, longitude: point.lon)
-        // The appraiser page adds the roof details. If it fails we still have the basics.
+        // roof details are a bonus; keep going without them
         if let details = try? await appraiserDetails(parcelID: parcel.parid) {
             record.merge(details)
         }
@@ -60,7 +57,8 @@ struct PropertyLookupService {
     struct Parcel { let parid: String; let use: String; let isCondo: Bool; let homestead: Bool; let market: Int?; let municipality: String; let site: String }
 
     func parcel(at p: Point, houseNumber: String?) async throws -> Parcel {
-        // Exact point first; if the point falls on a lot line, widen to 25 m and pick the matching house number.
+        // Points on a lot line miss, so retry with a 25 m buffer and match the house number
+        // (the buffer alone can grab the neighbor).
         for distance in [0, 25] {
             var c = URLComponents(string: Self.parcels)!
             var items: [URLQueryItem] = [
@@ -121,7 +119,7 @@ struct PropertyLookupService {
         return try Self.parseAppraiserPage(String(decoding: data, as: UTF8.self))
     }
 
-    /// The appraiser page has no official API, but it embeds its data as `var model = {...};`.
+    // No official API, but the page embeds its data as `var model = {...};`.
     static func parseAppraiserPage(_ html: String) throws -> AppraiserDetails {
         guard let start = html.range(of: "var model = "),
               let end = html.range(of: "};", range: start.upperBound..<html.endIndex)
@@ -132,7 +130,7 @@ struct PropertyLookupService {
         var elements: [String: String] = [:]
         let structural = model["structuralDetails"] as? [String: Any]
         for e in (structural?["StructuralElements"] as? [[String: Any]]) ?? [] {
-            // Only the first building (multi-building parcels list several).
+            // multi-building parcels: just use building 1
             guard (e["BuildingNumber"] as? String ?? "1") == "1" else { continue }
             let name = (e["ElementName"] as? String ?? "").trimmingCharacters(in: .whitespaces)
             elements[name] = (e["ElementValue"] as? String ?? "").trimmingCharacters(in: .whitespaces)

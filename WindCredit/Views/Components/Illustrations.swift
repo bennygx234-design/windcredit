@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Hand-drawn (in code) illustrations so homeowners can match what they see on their own house.
-/// All drawings use a 0–1 unit space, scaled to the view.
+// All drawings use 0–1 coordinates and get scaled to the view.
 private extension CGSize {
     func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x * width, y: y * height) }
 }
@@ -23,12 +22,10 @@ struct HouseIllustration: View {
         Canvas { ctx, s in
             let stroke = StrokeStyle(lineWidth: 1.6, lineJoin: .round)
             let ink = GraphicsContext.Shading.color(Theme.ink.opacity(0.85))
-            // Walls: front face and right side face.
             let front = poly(s, [(0.12, 0.55), (0.62, 0.55), (0.62, 0.93), (0.12, 0.93)])
             let side = poly(s, [(0.62, 0.55), (0.88, 0.45), (0.88, 0.83), (0.62, 0.93)])
             ctx.fill(front, with: .color(Theme.sand))
             ctx.fill(side, with: .color(Theme.line))
-            // Door and windows.
             ctx.fill(poly(s, [(0.33, 0.72), (0.41, 0.72), (0.41, 0.93), (0.33, 0.93)]), with: .color(accent.opacity(0.35)))
             ctx.stroke(poly(s, [(0.17, 0.66), (0.27, 0.66), (0.27, 0.78), (0.17, 0.78)]), with: ink, style: stroke)
             ctx.stroke(poly(s, [(0.47, 0.66), (0.57, 0.66), (0.57, 0.78), (0.47, 0.78)]), with: ink, style: stroke)
@@ -75,14 +72,13 @@ struct ConnectionIllustration: View {
     let kind: RoofToWall
     var accent: Color = Theme.teal
 
-    /// Top edge of the sloped rafter at a given x.
     private func top(_ x: CGFloat) -> CGFloat { 0.10 + 0.42 * (x - 0.04) }
 
     var body: some View {
         Canvas { ctx, s in
             let ink = GraphicsContext.Shading.color(Theme.ink.opacity(0.85))
             let stroke = StrokeStyle(lineWidth: 1.6, lineJoin: .round)
-            // Wall (concrete block) and the wooden top plate it carries.
+            // block wall + wood top plate
             let wall = poly(s, [(0.50, 0.62), (0.90, 0.62), (0.90, 0.97), (0.50, 0.97)])
             let plate = poly(s, [(0.46, 0.53), (0.94, 0.53), (0.94, 0.62), (0.46, 0.62)])
             ctx.fill(wall, with: .color(Theme.sand))
@@ -93,7 +89,7 @@ struct ConnectionIllustration: View {
             ctx.fill(plate, with: .color(Color(light: 0xE6C9A0, dark: 0x8A6E4B)))
             ctx.stroke(wall, with: ink, style: stroke)
             ctx.stroke(plate, with: ink, style: stroke)
-            // Rafter: a thick sloped beam resting on the plate.
+            // rafter
             let rafter = poly(s, [(0.04, top(0.04)), (0.98, top(0.98)), (0.98, top(0.98) + 0.13), (0.04, top(0.04) + 0.13)])
             ctx.fill(rafter, with: .color(Color(light: 0xD8B47F, dark: 0x9C7B50)))
             ctx.stroke(rafter, with: ink, style: stroke)
@@ -158,19 +154,19 @@ struct WindowIllustration: View {
 
             switch kind {
             case .hurricane:
-                // Accordion shutter fully closed over the window.
+                // accordion shutter, closed
                 for i in 0..<7 {
                     let x = 0.27 + CGFloat(i) * 0.066
                     let slat = poly(s, [(x, 0.12), (x + 0.066, 0.12), (x + 0.066, 0.90), (x, 0.90)])
                     ctx.fill(slat, with: .color(i.isMultiple(of: 2) ? accent : accent.opacity(0.75)))
                 }
             case .basic:
-                // Panels over part of the window.
+
                 let panel = poly(s, [(0.27, 0.12), (0.73, 0.12), (0.73, 0.48), (0.27, 0.48)])
                 ctx.fill(panel, with: .color(accent.opacity(0.55)))
                 ctx.stroke(panel, with: ink, style: StrokeStyle(lineWidth: 1))
             case .none:
-                // Plywood board, nailed on: earns no credit.
+                // plywood: no credit
                 let ply = poly(s, [(0.20, 0.30), (0.80, 0.24), (0.82, 0.70), (0.22, 0.76)])
                 ctx.fill(ply, with: .color(Color(light: 0xD9B98A, dark: 0x7D6443)))
                 ctx.stroke(ply, with: ink, style: stroke)

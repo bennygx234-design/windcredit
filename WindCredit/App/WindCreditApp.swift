@@ -20,8 +20,6 @@ struct WindCreditApp: App {
     }
 }
 
-/// One straight path, value first:
-/// welcome → address → your home → your policy → results → save your plan → plan.
 struct RootView: View {
     @EnvironmentObject var model: AppModel
     @EnvironmentObject var auth: AuthService
@@ -43,6 +41,5 @@ struct RootView: View {
         .animation(.easeInOut(duration: 0.25), value: model.saved.hasSeenIntro)
         .animation(.easeInOut(duration: 0.25), value: auth.status)
         .animation(.easeInOut(duration: 0.25), value: model.saved.setupDone)
-        .task(id: model.saved.completed) { await model.sync(using: auth.client) }
     }
 }

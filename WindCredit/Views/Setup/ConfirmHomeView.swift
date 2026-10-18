@@ -1,7 +1,6 @@
 import MapKit
 import SwiftUI
 
-/// Shows what county records say, then asks four picture questions (from the state inspection form).
 struct ConfirmHomeView: View {
     @EnvironmentObject var model: AppModel
     let next: () -> Void
@@ -14,7 +13,7 @@ struct ConfirmHomeView: View {
                 ScreenHeader(step: "Step 2 of 3", title: "Your home",
                              subtitle: "Here’s what public records say. Check the four questions below; “Not sure” is fine.")
                 if let r = model.saved.record {
-                    recordCard(r)
+                    recordCard(r).reveal(0.05)
                     if r.isCondo { condoNote }
                 }
 
@@ -43,9 +42,9 @@ struct ConfirmHomeView: View {
                 }
 
                 if !(model.saved.record?.isNewConstruction ?? false) {
-                    question("Was the roof put on or replaced after 2002?", hint: "Newer roofs meet the stronger Florida Building Code.") {
+                    question("Was the roof replaced after March 2002?", hint: "A roofing permit from March 1, 2002 on (or an original roof on a 2004+ home) meets the Florida Building Code.") {
                         ForEach(YesNoUnsure.allCases) { v in
-                            ChoiceCard(title: v.title, detail: v == .yes ? "Permit after March 2002" : v == .no ? "Original or older roof" : "We’ll assume no",
+                            ChoiceCard(title: v.title, detail: v == .yes ? "Roofing permit on or after 3/1/2002" : v == .no ? "Original or older roof" : "We’ll assume no",
                                        art: .roofAge(v),
                                        selected: model.saved.home.roofMeetsCode == v) {
                                 model.saved.home.roofMeetsCode = v
