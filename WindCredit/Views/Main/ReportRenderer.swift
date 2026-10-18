@@ -1,11 +1,10 @@
 import SwiftUI
 
-/// A one-page PDF a homeowner can send to their insurance agent.
 @MainActor
 enum ReportRenderer {
-    static func makePDF(model: AppModel) -> URL {
+    static func makePDF(model: AppModel, name: String? = nil, email: String? = nil) -> URL {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("WindCredit-Report.pdf")
-        let renderer = ImageRenderer(content: ReportPage(model: model).frame(width: 612, height: 792))
+        let renderer = ImageRenderer(content: ReportPage(model: model, name: name, email: email).frame(width: 612, height: 792))
         renderer.render { size, draw in
             var box = CGRect(origin: .zero, size: size)
             guard let ctx = CGContext(url as CFURL, mediaBox: &box, nil) else { return }
@@ -20,15 +19,18 @@ enum ReportRenderer {
 
 private struct ReportPage: View {
     let model: AppModel
+    var name: String?
+    var email: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack {
-                Text("WindCredit").font(.custom("WCDisplay-SemiBold", size: 28)).foregroundStyle(Color(hex: 0x0E7C7B))
+                Text("WindCredit").font(.custom("WCDisplay-SemiBold", size: 28)).foregroundStyle(Color(uiColor: UIColor(hex: 0x0E7C7B)))
                 Spacer()
                 Text(Date.now.formatted(date: .long, time: .omitted)).font(.custom("WCText-Regular", size: 10))
             }
             Text("Wind-mitigation discount review").font(.custom("WCDisplay-Regular", size: 19))
+            if let name { row("Prepared for", [name, email].compactMap { $0 }.joined(separator: " · ")) }
             if let r = model.saved.record {
                 Group {
                     row("Address", r.displayAddress)
@@ -57,7 +59,7 @@ private struct ReportPage: View {
                 .font(.custom("WCText-Regular", size: 9)).foregroundStyle(.secondary)
         }
         .padding(48)
-        .background(Color(hex: 0xFBF8F3))
+        .background(Color(uiColor: UIColor(hex: 0xFBF8F3)))
         .foregroundStyle(Color.black)
         .environment(\.colorScheme, .light)
     }
@@ -67,8 +69,4 @@ private struct ReportPage: View {
     }
 
     private func pct(_ v: Double) -> String { v.formatted(.percent.precision(.fractionLength(0))) }
-}
-
-private extension Color {
-    init(hex: UInt32) { self.init(uiColor: UIColor(hex: hex)) }
 }

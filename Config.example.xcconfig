@@ -1,7 +1,4 @@
-// Copy to Config.xcconfig and fill in. Config.xcconfig is git-ignored.
-// Leave values empty to run in demo mode.
-// The "/$()/" trick stops xcconfig treating "//" as a comment.
-SUPABASE_URL = https:/$()/YOUR-PROJECT.supabase.co
-SUPABASE_ANON_KEY =
+// Copy to Config.xcconfig (git-ignored) and fill in. Leave empty to run without Google sign-in.
+// Free: create an "iOS" OAuth client at console.cloud.google.com for bundle ID com.bennygober.windcredit.
 GOOGLE_IOS_CLIENT_ID =
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.placeholder

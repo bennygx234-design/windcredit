@@ -45,3 +45,11 @@ I scored the app the way a district judge would, using the CAC sample rubric (6 
 **About 24/25 before the video.** What still decides it is outside the app: (1) a real accuracy number from 5–10 Boca homes with real inspection reports, (2) the 2:50 video, (3) real sign-in keys so the Apple and Google buttons work for judges.
 
 Not reproduced: one early run jumped back from "Your policy" to "Your home". Three later runs of the same steps worked, so it was likely a tap that landed during a scroll. Watch for it while testing.
+
+## v3: free, fact-checked, animated (Oct 17, late)
+
+- **Free:** removed Supabase (free tier pauses after 7 idle days, a risk during judging) and Sign in with Apple ($99/yr program; App Store-only rule). Google sign-in only, no backend; all data stays on the phone. "Free. No ads, no subscriptions" stated in the app.
+- **Google button:** custom pill per Google's 2026 branding guidelines (official gradient G at 20pt, Google Sans Medium, #FFFFFF/#747775/#1F1F1F light and #131314/#8E918F/#E3E3E3 dark, "Continue with Google").
+- **Fact-check (12 claims, primary sources):** corrected the 89% cap wording (82–84% for most existing Palm Beach homes; 89% only applies in the HVHZ), MSFH eligibility ("built before 2008", "insured value", grants are income-limited, applications open in phases), the roof-permit rule (permit on/after 3/1/2002, or original roof on a 2004+ home), plywood (no credit *at Citizens*), the clips claim (softened), the "about half" hurricane share, and the $6,323 source (OIR Stability Report, July 2026). Inspections are valid 5 years if there are no material changes.
+- **Animations:** count-up figures, staggered reveals, growing bars, neighborhood houses lighting up, bouncing checkmarks, and an animated lookup screen. All respect Reduce Motion.
+- **Code cleanup:** about 70 comments that restated the code were removed or shortened; the rest explain decisions. Duplicate helpers were removed.

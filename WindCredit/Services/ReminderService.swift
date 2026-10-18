@@ -1,11 +1,10 @@
 import Foundation
 import UserNotifications
 
-/// Local reminders before the policy renews (no server needed).
 enum ReminderService {
     static let ids = ["renewal-30", "renewal-7"]
 
-    /// Asks permission (only when the user taps "Remind me"), then schedules 30- and 7-day reminders at 9 am.
+    // Only called from the "Turn on reminder" button, so the permission prompt has context.
     static func schedule(renewal: Date, savingsText: String) async -> Bool {
         let center = UNUserNotificationCenter.current()
         let granted = (try? await center.requestAuthorization(options: [.alert, .sound, .badge])) ?? false

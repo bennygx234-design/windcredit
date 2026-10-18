@@ -1,13 +1,12 @@
 import Foundation
 
-/// The civic view: how many homes around you were built before Florida's 2002 building code,
-/// and so likely qualify for wind discounts. Uses the Florida statewide parcel layer (tax-roll data).
+// Counts nearby single-family homes and how many predate the 2002 building code.
+// Data: Florida statewide parcel layer (DOR tax roll).
 struct Neighborhood: Codable, Equatable {
     var homes: Int
     var olderHomes: Int
     var olderShare: Double { homes > 0 ? Double(olderHomes) / Double(homes) : 0 }
 
-    /// "If 1 in 4 older homes is missing a credit the size of yours…"
     func dollarsIfQuarterMissing(perHome: Int) -> Int {
         DiscountEngine.roundTo50(Double(olderHomes) * 0.25 * Double(perHome))
     }
@@ -19,7 +18,7 @@ struct NeighborhoodService {
     var session: URLSession = .shared
     private static let layer = "https://services9.arcgis.com/Gh9awoU677aKree0/arcgis/rest/services/Florida_Statewide_Cadastral/FeatureServer/0/query"
 
-    /// Roughly a quarter mile in each direction around the home.
+    // ~quarter mile each way. (Distance buffers error out on this service, so use a box.)
     static let latSpan = 0.0036, lonSpan = 0.004
 
     func load(latitude: Double, longitude: Double) async throws -> Neighborhood {
@@ -42,7 +41,6 @@ struct NeighborhoodService {
         return n
     }
 
-    /// Text a homeowner can send to a city council member or state representative.
     static func shareText(_ n: Neighborhood, street: String, perHome: Int) -> String {
         let pct = Int((n.olderShare * 100).rounded())
         return """

@@ -1,20 +1,16 @@
-import AuthenticationServices
-import GoogleSignInSwift
 import SwiftUI
 
-/// "Save your plan": shown after the results, so people see the value before any account.
+// Comes after the results on purpose: show the value before asking for an account.
 struct SignInView: View {
     @EnvironmentObject var auth: AuthService
     @EnvironmentObject var model: AppModel
-    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             Spacer()
             Eyebrow(text: "Your plan is ready")
-            Text("Save it so you don’t lose it")
+            Text("Make it yours")
                 .font(.wcTitle).foregroundStyle(Theme.ink)
-                .fixedSize(horizontal: false, vertical: true)
 
             if model.savingsText != "$0" {
                 VStack(alignment: .leading, spacing: 4) {
@@ -26,39 +22,30 @@ struct SignInView: View {
                 .padding(18)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(Theme.mist, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .reveal(0.1)
             }
+
+            VStack(alignment: .leading, spacing: 12) {
+                perk("person.text.rectangle", "Your name and email go on the report for your agent")
+                perk("iphone", "Your plan stays on this phone either way")
+                perk("tag", "Free. No ads, no subscriptions")
+            }
+            .reveal(0.2)
+
             Spacer()
 
-            VStack(spacing: 12) {
-                SignInWithAppleButton(.continue) { auth.prepareApple($0) } onCompletion: { result in
-                    Task { await auth.finishApple(result) }
-                }
-                .signInWithAppleButtonStyle(scheme == .dark ? .white : .black)
-                .frame(height: 54)
-                .clipShape(Capsule())
+            GoogleSignInPill { Task { await auth.signInWithGoogle() } }
+                .reveal(0.3)
 
-                // Google's own button, as its branding rules require.
-                GoogleSignInButton(scheme: scheme == .dark ? .dark : .light, style: .wide, state: .normal) {
-                    Task { await auth.signInWithGoogle() }
-                }
-                .frame(height: 54)
-                .accessibilityIdentifier("googleSignIn")
-
-                Button("Keep it on this phone instead") { auth.continueWithoutAccount() }
-                    .font(.wcBodyMedium)
-                    .foregroundStyle(Theme.muted)
-                    .padding(.top, 6)
-                    .accessibilityIdentifier("noAccount")
-            }
-            .disabled(auth.isWorking)
-            .overlay { if auth.isWorking { ProgressView() } }
-
-            Label("Your policy photo never leaves your phone.", systemImage: "lock.fill")
-                .font(.wcCaption).foregroundStyle(Theme.muted)
+            Button("Skip, keep it on this phone") { auth.continueWithoutAccount() }
+                .font(.wcBodyMedium)
+                .foregroundStyle(Theme.muted)
                 .frame(maxWidth: .infinity)
-                .padding(.bottom, 8)
+                .padding(.vertical, 6)
+                .accessibilityIdentifier("noAccount")
         }
         .padding(.horizontal, 24)
+        .padding(.bottom, 8)
         .background(Theme.background.ignoresSafeArea())
         .alert("Sign-in", isPresented: Binding(get: { auth.errorMessage != nil }, set: { if !$0 { auth.errorMessage = nil } })) {
             Button("OK", role: .cancel) {
@@ -68,5 +55,13 @@ struct SignInView: View {
                 }
             }
         } message: { Text(auth.errorMessage ?? "") }
+    }
+
+    private func perk(_ icon: String, _ text: String) -> some View {
+        Label {
+            Text(text).font(.wcSub).foregroundStyle(Theme.ink)
+        } icon: {
+            Image(systemName: icon).foregroundStyle(Theme.teal).frame(width: 24)
+        }
     }
 }
