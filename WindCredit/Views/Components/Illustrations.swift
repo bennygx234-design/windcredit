@@ -110,8 +110,12 @@ struct ConnectionIllustration: View {
                 let clip = poly(s, [(x, top(x) + 0.10), (x + 0.10, top(x + 0.10) + 0.10), (x + 0.10, 0.62), (x, 0.62)])
                 ctx.fill(clip, with: metal)
                 ctx.stroke(clip, with: ink, style: StrokeStyle(lineWidth: 1))
-                for (cx, cy) in [(x + 0.03, 0.57), (x + 0.07, 0.57)] as [(CGFloat, CGFloat)] {
-                    ctx.fill(Path(ellipseIn: CGRect(origin: s.p(cx - 0.01, cy - 0.01), size: CGSize(width: s.width * 0.02, height: s.width * 0.02))), with: .color(.white.opacity(0.8)))
+                // two nail holes
+                let hole = s.width * 0.02
+                for cx in [x + 0.03, x + 0.07] {
+                    let origin = s.p(cx - 0.01, 0.56)
+                    ctx.fill(Path(ellipseIn: CGRect(x: origin.x, y: origin.y, width: hole, height: hole)),
+                             with: .color(.white.opacity(0.8)))
                 }
             case .singleWraps, .doubleWraps:
                 let xs: [CGFloat] = kind == .singleWraps ? [0.66] : [0.60, 0.76]

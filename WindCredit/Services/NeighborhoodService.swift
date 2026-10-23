@@ -11,11 +11,11 @@ struct Neighborhood: Codable, Equatable {
         DiscountEngine.roundTo50(Double(olderHomes) * 0.25 * Double(perHome))
     }
 
-    static let sample = Neighborhood(homes: 369, olderHomes: 354)
+    static let sample = Neighborhood(homes: 391, olderHomes: 377)
 }
 
 struct NeighborhoodService {
-    var session: URLSession = .shared
+    var session: URLSession = .county
     private static let layer = "https://services9.arcgis.com/Gh9awoU677aKree0/arcgis/rest/services/Florida_Statewide_Cadastral/FeatureServer/0/query"
 
     // ~quarter mile each way. (Distance buffers error out on this service, so use a box.)
@@ -33,7 +33,11 @@ struct NeighborhoodService {
             .init(name: "geometry", value: "\(lon - Self.lonSpan),\(lat - Self.latSpan),\(lon + Self.lonSpan),\(lat + Self.latSpan)"),
             .init(name: "geometryType", value: "esriGeometryEnvelope"), .init(name: "inSR", value: "4326"),
             .init(name: "spatialRel", value: "esriSpatialRelIntersects"),
-            .init(name: "where", value: clause), .init(name: "returnCountOnly", value: "true"), .init(name: "f", value: "json"),
+            .init(name: "where", value: clause),
+            // the statewide layer has some duplicate rows, so count distinct parcel IDs
+            .init(name: "returnDistinctValues", value: "true"), .init(name: "outFields", value: "PARCEL_ID"),
+            .init(name: "returnGeometry", value: "false"),
+            .init(name: "returnCountOnly", value: "true"), .init(name: "f", value: "json"),
         ]
         let (data, _) = try await session.data(from: c.url!)
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any], let n = json["count"] as? Int

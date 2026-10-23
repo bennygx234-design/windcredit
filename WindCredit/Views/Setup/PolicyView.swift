@@ -17,7 +17,8 @@ struct PolicyView: View {
     @State private var isReading = false
     @State private var scanned = false
     @State private var message: String?
-    @State private var missingPremium = false
+    @State private var inputProblem: String?
+    @FocusState private var typing: Bool
 
     var body: some View {
         ScrollView {
@@ -66,9 +67,7 @@ struct PolicyView: View {
                     Text("Turn on any your page lists. If there’s no wind-mitigation section, leave these off.")
                         .font(.wcSub).foregroundStyle(Theme.muted)
                     Toggle("Hip roof", isOn: binding(\.roofShape, on: .hip, off: .notSure))
-                    Toggle("Roof clips or straps", isOn: Binding(
-                        get: { DiscountEngine.strength(draft.creditedFeatures.roofToWall) > 0 },
-                        set: { draft.creditedFeatures.roofToWall = $0 ? (model.saved.home.roofToWall == .notSure || model.saved.home.roofToWall == .toeNails ? .clips : model.saved.home.roofToWall) : .notSure }))
+                    Toggle("Roof clips or straps", isOn: roofTiesCredited)
                     Toggle("Window protection", isOn: Binding(
                         get: { DiscountEngine.strength(draft.creditedFeatures.openings) > 0 },
                         set: { draft.creditedFeatures.openings = $0 ? .hurricane : .notSure }))
@@ -82,10 +81,13 @@ struct PolicyView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(Theme.background.ignoresSafeArea())
         .safeAreaInset(edge: .bottom) {
-            BottomBar {
-                Button("See my savings") { finish() }
-                    .buttonStyle(PrimaryButtonStyle())
-                    .accessibilityIdentifier("seeSavings")
+            // hidden while typing so it doesn't ride up behind the keyboard's Done button
+            if !typing {
+                BottomBar {
+                    Button("See my savings") { finish() }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .accessibilityIdentifier("seeSavings")
+                }
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -100,9 +102,15 @@ struct PolicyView: View {
             }
         }
         .onAppear(perform: load)
-        .alert("Add your premium", isPresented: $missingPremium) {
+        .alert("Check your numbers", isPresented: Binding(get: { inputProblem != nil }, set: { if !$0 { inputProblem = nil } })) {
             Button("OK", role: .cancel) {}
-        } message: { Text("Type the total yearly premium from your policy so we can estimate dollars.") }
+        } message: { Text(inputProblem ?? "") }
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Done") { typing = false }
+            }
+        }
     }
 
     // MARK: Logic
@@ -146,10 +154,13 @@ struct PolicyView: View {
     }
 
     private func finish() {
-        guard let premium = Self.number(premiumText), premium > 0 else { missingPremium = true; return }
-        draft.totalPremium = premium
-        draft.hurricanePremium = Self.number(windText)
-        draft.dwellingCoverage = Self.number(dwellingText)
+        if let problem = Self.problem(total: premiumText, wind: windText) {
+            inputProblem = problem
+            return
+        }
+        draft.totalPremium = Self.number(premiumText)
+        draft.hurricanePremium = Self.number(windText).flatMap { $0 > 0 ? $0 : nil }
+        draft.dwellingCoverage = Self.number(dwellingText).flatMap { $0 > 0 ? $0 : nil }
         draft.renewalDate = hasRenewal ? renewal : nil
         model.finishPolicy(draft)
         next()
@@ -157,6 +168,31 @@ struct PolicyView: View {
 
     static func number(_ s: String) -> Double? {
         Double(s.filter { $0.isNumber || $0 == "." })
+    }
+
+    /// Catches the typos that would make the estimate meaningless.
+    static func problem(total: String, wind: String) -> String? {
+        guard let t = number(total), t > 0 else {
+            return "Type the total yearly premium from your policy so we can estimate dollars."
+        }
+        if t < 200 || t > 100_000 {
+            return "A yearly premium of \(AppModel.money(Int(t))) looks off. Use the total for the whole year."
+        }
+        if let w = number(wind), w > t {
+            return "The hurricane premium can’t be bigger than the total premium."
+        }
+        return nil
+    }
+
+    /// On = credit the connection the owner described, or plain clips if they didn't say.
+    private var roofTiesCredited: Binding<Bool> {
+        Binding(
+            get: { DiscountEngine.strength(draft.creditedFeatures.roofToWall) > 0 },
+            set: { isOn in
+                let described = model.saved.home.roofToWall
+                let strongest = DiscountEngine.strength(described) > 0 ? described : .clips
+                draft.creditedFeatures.roofToWall = isOn ? strongest : .notSure
+            })
     }
 
     private func binding<T: Equatable>(_ path: WritableKeyPath<MitigationFeatures, T>, on: T, off: T) -> Binding<Bool> {
@@ -169,7 +205,7 @@ struct PolicyView: View {
             Text(label).font(.wcCaptionStrong).foregroundStyle(Theme.muted)
             HStack {
                 Text("$").font(.wcBodyMedium).foregroundStyle(Theme.muted)
-                TextField("0", text: text).font(.wcBodyMedium).keyboardType(.numberPad).accessibilityIdentifier(id)
+                TextField("0", text: text).font(.wcBodyMedium).keyboardType(.numberPad).focused($typing).accessibilityIdentifier(id)
             }
             .padding(14)
             .background(Theme.background, in: RoundedRectangle(cornerRadius: 14, style: .continuous))

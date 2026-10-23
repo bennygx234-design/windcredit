@@ -4,17 +4,16 @@ import Foundation
 //         → Property Appraiser page (year built, roof)
 struct PropertyLookupService {
     enum LookupError: LocalizedError {
-        case notFound, outsideCounty, network
+        case notFound, network
         var errorDescription: String? {
             switch self {
-            case .notFound: "We couldn’t find that address in county records. Check the house number and street."
-            case .outsideCounty: "WindCredit covers Palm Beach County homes for now."
+            case .notFound: "We couldn’t find that address in Palm Beach County records. Check the house number and street (WindCredit only covers Palm Beach County for now)."
             case .network: "Couldn’t reach county records. Check your connection and try again."
             }
         }
     }
 
-    var session: URLSession = .shared
+    var session: URLSession = .county
 
     private static let geocoder = "https://gis.pbcgov.org/arcgis/rest/services/Geocoder_New/Situs_115/GeocodeServer/findAddressCandidates"
     private static let parcels = "https://gis.pbcgov.org/arcgis/rest/services/Parcels/PARCEL_INFO/FeatureServer/4/query"
@@ -171,4 +170,14 @@ extension PropertyRecord {
         if let h = d.homestead { homestead = homestead || h }
         if let u = d.useDescription, !u.isEmpty { useDescription = u }
     }
+}
+
+extension URLSession {
+    /// County GIS servers can be slow; don't leave someone staring at a spinner for a minute.
+    static let county: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 15
+        config.timeoutIntervalForResource = 30
+        return URLSession(configuration: config)
+    }()
 }
