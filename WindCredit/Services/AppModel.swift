@@ -1,6 +1,6 @@
 import Foundation
 
-/// Everything the user has entered, saved on the phone (and to their account when signed in).
+/// Everything the user has entered. Saved on the phone only.
 @MainActor
 final class AppModel: ObservableObject {
     struct Saved: Codable {
@@ -55,12 +55,25 @@ final class AppModel: ObservableObject {
         return "$0"
     }
 
+    /// For use mid-sentence ("You could save up to $1,350 a year").
+    var savingsPhrase: String {
+        savingsText.hasPrefix("Up to") ? "up to" + savingsText.dropFirst(5) : savingsText
+    }
+
+    var hasSavingsToShow: Bool { savingsText != "$0" }
+
     var progress: Double { Double(saved.completed.count) / Double(PlanStep.allCases.count) }
 
     // MARK: Actions
 
     func setRecord(_ r: PropertyRecord) {
-        if saved.record?.parcelID != r.parcelID { saved.neighborhood = nil }
+        if let old = saved.record, old.parcelID != r.parcelID {
+            // Different house: the old answers, policy and plan don't apply anymore.
+            let intro = saved.hasSeenIntro
+            saved = Saved()
+            saved.hasSeenIntro = intro
+            ReminderService.cancel()
+        }
         saved.record = r
         // Preselect what public records suggest. The user confirms on the next screen.
         if saved.home.roofShape == .notSure { saved.home.roofShape = r.roofShapeHint }
@@ -87,6 +100,8 @@ final class AppModel: ObservableObject {
     func confirmHome() { saved.completed.insert(.confirmHome) }
 
     func finishPolicy(_ p: PolicyInfo) {
+        var p = p
+        p.renewalDate = p.renewalDate.map { Self.nextRenewal(after: $0) }
         saved.policy = p
         saved.policyDone = true
         saved.completed.insert(.scanPolicy)
@@ -126,6 +141,17 @@ final class AppModel: ObservableObject {
 
     private func persist() {
         if let data = try? JSONEncoder().encode(saved) { UserDefaults.standard.set(data, forKey: key) }
+    }
+
+    /// Policies renew yearly, so a date read off last year's page moves forward to the next one.
+    nonisolated static func nextRenewal(after date: Date) -> Date {
+        var d = date
+        let cal = Calendar.current
+        while d < cal.startOfDay(for: .now) {
+            guard let next = cal.date(byAdding: .year, value: 1, to: d) else { break }
+            d = next
+        }
+        return d
     }
 
     nonisolated static func money(_ n: Int) -> String {

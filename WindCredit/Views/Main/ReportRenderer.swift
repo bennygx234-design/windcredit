@@ -47,7 +47,7 @@ private struct ReportPage: View {
             row("Roof after 2002", model.saved.home.roofMeetsCode.title)
             Divider()
             if let e = model.estimate {
-                Text("Estimated missed savings: \(model.savingsText) per year").font(.custom("WCText-SemiBold", size: 14))
+                Text("Estimated missed savings: \(model.savingsPhrase) per year").font(.custom("WCText-SemiBold", size: 14))
                 ForEach(e.missing) { m in row(m.title, "up to \(AppModel.money(m.yearlyHigh))") }
                 row("Credit now → possible", "\(pct(e.creditNow)) → \(pct(e.creditPossible))")
             }

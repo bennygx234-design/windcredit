@@ -78,3 +78,19 @@ Most of the code so far was AI-generated. The fix is real, not cosmetic:
 3. Disclose accurately (SUBMISSION.md §4).
 
 No video can guarantee an award: it depends on the other entries in your district and on the judges. But a strong, honest entry that you fully understand is the best possible position.
+
+## v5: debug pass (Oct 23)
+
+Bugs found and fixed (6 new regression tests, 23 total passing):
+- **Possible crash in policy scanning:** the OCR code could "resume" twice if Vision failed. Rewritten so there's only one exit path.
+- **Wrong renewal date:** "TERM" matched words like "TERMS AND CONDITIONS", and impossible dates (13/01, 02/31) were accepted. Fixed.
+- **Expired renewal date:** a date read off last year's page stayed in the past, so reminders silently never scheduled. Dates now roll forward a year, and the app says so if renewal is under a week away.
+- **Old answers stuck to a new house:** entering a different address kept the previous home's answers and policy. A new address now starts fresh.
+- **Typos accepted:** a $57 premium or a hurricane premium bigger than the total went through. Now caught with a plain message.
+- **Number pad couldn't be closed:** added a keyboard Done button, and the bottom button hides while typing.
+- **Text cut off at large text sizes:** welcome cards truncated sentences ("About half of a typi…"); they now scroll. The progress-ring label no longer overflows.
+- **Neighborhood counted duplicate rows:** the statewide parcel layer has duplicates; it now counts distinct parcels (sample: 391 homes, 377 pre-2002, still 96%).
+- **Slow county servers:** requests now time out after 15 seconds instead of 60.
+- **Grammar in reminders:** "You could save Up to $1,300" now reads "up to".
+
+Readability: named label lists in the parser, extracted helpers for a dense toggle and a nested ternary, removed a duplicated hurricane-premium formula, split crowded drawing code.

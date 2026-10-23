@@ -12,7 +12,7 @@ struct SignInView: View {
             Text("Make it yours")
                 .font(.wcTitle).foregroundStyle(Theme.ink)
 
-            if model.savingsText != "$0" {
+            if model.hasSavingsToShow {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(model.savingsText).font(.wcFigure(40)).foregroundStyle(Theme.teal)
                         .minimumScaleFactor(0.6).lineLimit(1)

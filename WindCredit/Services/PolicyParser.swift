@@ -6,37 +6,42 @@ import Vision
 enum PolicyScanner {
     static func readText(from image: UIImage) async throws -> [String] {
         guard let cg = image.cgImage else { return [] }
-        return try await withCheckedThrowingContinuation { cont in
-            let request = VNRecognizeTextRequest { req, err in
-                if let err { cont.resume(throwing: err); return }
-                let lines = (req.results as? [VNRecognizedTextObservation] ?? [])
-                    .sorted { a, b in
-                        // Vision's y axis starts at the bottom
-                        abs(a.boundingBox.midY - b.boundingBox.midY) > 0.01
-                            ? a.boundingBox.midY > b.boundingBox.midY : a.boundingBox.minX < b.boundingBox.minX
-                    }
-                    .compactMap { $0.topCandidates(1).first?.string }
-                cont.resume(returning: lines)
-            }
+        let orientation = image.cgOrientation
+        // perform() is synchronous, so run it off the main thread and read results afterwards.
+        // (Using a completion handler here risked resuming the continuation twice on errors.)
+        return try await Task.detached(priority: .userInitiated) {
+            let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
             request.usesLanguageCorrection = true
-            DispatchQueue.global(qos: .userInitiated).async {
-                do { try VNImageRequestHandler(cgImage: cg, orientation: image.cgOrientation).perform([request]) }
-                catch { cont.resume(throwing: error) }
-            }
-        }
+            try VNImageRequestHandler(cgImage: cg, orientation: orientation).perform([request])
+            return (request.results ?? [])
+                .sorted { a, b in
+                    // Vision's y axis starts at the bottom
+                    abs(a.boundingBox.midY - b.boundingBox.midY) > 0.01
+                        ? a.boundingBox.midY > b.boundingBox.midY : a.boundingBox.minX < b.boundingBox.minX
+                }
+                .compactMap { $0.topCandidates(1).first?.string }
+        }.value
     }
 }
 
 // Every insurer lays out the page differently, so look for labels and grab the amount next to them.
 enum PolicyParser {
+    // Order matters: the most specific wording is tried first.
+    private enum Labels {
+        static let total = ["TOTAL POLICY PREMIUM", "TOTAL PREMIUM", "ANNUAL PREMIUM", "POLICY PREMIUM", "TOTAL ANNUAL"]
+        static let hurricane = ["HURRICANE PREMIUM", "WINDSTORM PREMIUM", "WIND PREMIUM", "HURRICANE WIND PREMIUM"]
+        static let notHurricane = ["NON-HURRICANE", "NON HURRICANE", "EXCLUDING"]
+        static let dwelling = ["COVERAGE A", "DWELLING"]
+    }
+
     static func parse(lines: [String]) -> PolicyInfo {
         var info = PolicyInfo()
         let upper = lines.map { $0.uppercased() }
 
-        info.totalPremium = amount(after: ["TOTAL POLICY PREMIUM", "TOTAL PREMIUM", "ANNUAL PREMIUM", "POLICY PREMIUM", "TOTAL ANNUAL"], in: upper)
-        info.hurricanePremium = amount(after: ["HURRICANE PREMIUM", "WINDSTORM PREMIUM", "WIND PREMIUM", "HURRICANE WIND PREMIUM"], in: upper, excluding: ["NON-HURRICANE", "NON HURRICANE", "EXCLUDING"])
-        info.dwellingCoverage = amount(after: ["COVERAGE A", "DWELLING"], in: upper)
+        info.totalPremium = amount(after: Labels.total, in: upper)
+        info.hurricanePremium = amount(after: Labels.hurricane, in: upper, excluding: Labels.notHurricane)
+        info.dwellingCoverage = amount(after: Labels.dwelling, in: upper)
         info.renewalDate = renewalDate(in: upper)
 
         let all = upper.joined(separator: "\n")
@@ -101,7 +106,10 @@ enum PolicyParser {
 
     // renewal = later date on the policy period / expiration line
     static func renewalDate(in lines: [String]) -> Date? {
-        let keyed = lines.enumerated().filter { _, l in ["POLICY PERIOD", "EXPIRATION", "EXPIRES", "TERM"].contains { l.contains($0) } }
+        let keyed = lines.enumerated().filter { _, l in
+            ["POLICY PERIOD", "EXPIRATION", "EXPIRES"].contains { l.contains($0) }
+                || l.range(of: #"\bPOLICY TERM\b|\bTERM:"#, options: .regularExpression) != nil
+        }
         for (i, l) in keyed {
             let text = l + " " + (i + 1 < lines.count ? lines[i + 1] : "")
             if let d = dates(in: text).max() { return d }
@@ -113,10 +121,17 @@ enum PolicyParser {
         let re = try! NSRegularExpression(pattern: #"(\d{1,2})/(\d{1,2})/(\d{2,4})"#)
         let ns = text as NSString
         return re.matches(in: text, range: NSRange(location: 0, length: ns.length)).compactMap { m in
-            var y = Int(ns.substring(with: m.range(at: 3)))!
+            guard var y = Int(ns.substring(with: m.range(at: 3))),
+                  let month = Int(ns.substring(with: m.range(at: 1))), (1...12).contains(month),
+                  let day = Int(ns.substring(with: m.range(at: 2))), (1...31).contains(day)
+            else { return nil }
             if y < 100 { y += 2000 }
-            let comps = DateComponents(year: y, month: Int(ns.substring(with: m.range(at: 1))), day: Int(ns.substring(with: m.range(at: 2))))
-            return Calendar(identifier: .gregorian).date(from: comps)
+            guard (2000...2100).contains(y) else { return nil }
+            // Calendar would quietly roll Feb 31 into March, so check the round trip.
+            let cal = Calendar(identifier: .gregorian)
+            guard let date = cal.date(from: DateComponents(year: y, month: month, day: day)),
+                  cal.component(.day, from: date) == day else { return nil }
+            return date
         }
     }
 }

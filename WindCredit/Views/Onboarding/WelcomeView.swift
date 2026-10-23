@@ -19,9 +19,9 @@ struct WelcomeView: View {
             .padding(.top, 8)
 
             TabView(selection: $page) {
-                premiumCard.tag(0)
-                lawCard.tag(1)
-                howCard.tag(2)
+                page(premiumCard).tag(0)
+                page(lawCard).tag(1)
+                page(howCard).tag(2)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
 
@@ -45,6 +45,20 @@ struct WelcomeView: View {
         .background(Theme.background.ignoresSafeArea())
     }
 
+    /// Centers a card vertically, but scrolls instead of cutting text off at large text sizes.
+    private func page<Card: View>(_ card: Card) -> some View {
+        GeometryReader { geo in
+            ScrollView {
+                card
+                    .frame(maxWidth: .infinity, minHeight: geo.size.height, alignment: .leading)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            // fade text that scrolls under the page dots
+            .mask(LinearGradient(stops: [.init(color: .black, location: 0.97), .init(color: .clear, location: 1)],
+                                 startPoint: .top, endPoint: .bottom))
+        }
+    }
+
     private var premiumCard: some View {
         VStack(alignment: .leading, spacing: 18) {
             Spacer()
@@ -58,10 +72,12 @@ struct WelcomeView: View {
                 .fixedSize(horizontal: false, vertical: true)
             Text("About half of a typical Florida premium pays for hurricane coverage, and that’s the part you can shrink.")
                 .font(.wcBody).foregroundStyle(Theme.muted).lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
             Text("Sources: Florida OIR Property Insurance Stability Report, July 2026; Brookings, 2026")
                 .font(.wcCaption).foregroundStyle(Theme.muted)
                 .padding(.bottom, 16)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 28)
     }
@@ -80,6 +96,7 @@ struct WelcomeView: View {
             }
             Text("Discount each one earns on its own, off the hurricane part of your premium (Florida’s credit table, OIR-B1-1699). Many homes qualify and never get them.")
                 .font(.wcCaption).foregroundStyle(Theme.muted).lineSpacing(2)
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
         .padding(.horizontal, 28)
@@ -87,7 +104,7 @@ struct WelcomeView: View {
 
     private func feature(_ name: String, _ value: String) -> some View {
         HStack {
-            Text(name).font(.wcSub).foregroundStyle(Theme.ink)
+            Text(name).font(.wcSub).foregroundStyle(Theme.ink).fixedSize(horizontal: false, vertical: true)
             Spacer()
             Text(value).font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
         }
@@ -107,8 +124,10 @@ struct WelcomeView: View {
             step(3, "Scan your policy", "Read on your phone. Never uploaded.").reveal(0.4)
             Text("Then see what you’re missing, in dollars, and exactly what to do next.")
                 .font(.wcBody).foregroundStyle(Theme.muted).lineSpacing(3)
+                .fixedSize(horizontal: false, vertical: true)
             Label("Free. No ads, no subscriptions, no account needed.", systemImage: "checkmark.seal")
                 .font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
+                .fixedSize(horizontal: false, vertical: true)
                 .reveal(0.55)
             Spacer()
         }
@@ -123,8 +142,8 @@ struct WelcomeView: View {
                 .frame(width: 42, height: 42)
                 .background(n == 3 ? Theme.coral : Theme.teal, in: Circle())
             VStack(alignment: .leading, spacing: 3) {
-                Text(title).font(.wcHeadline).foregroundStyle(Theme.ink)
-                Text(detail).font(.wcSub).foregroundStyle(Theme.muted)
+                Text(title).font(.wcHeadline).foregroundStyle(Theme.ink).fixedSize(horizontal: false, vertical: true)
+                Text(detail).font(.wcSub).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
             }
         }
     }

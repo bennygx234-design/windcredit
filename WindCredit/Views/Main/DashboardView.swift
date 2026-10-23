@@ -80,7 +80,8 @@ struct DashboardView: View {
         Card {
             HStack(spacing: 14) {
                 ProgressRing(progress: model.progress).frame(width: 56, height: 56)
-                    .overlay(Text("\(model.saved.completed.count)/\(PlanStep.allCases.count)").font(.wcCaptionStrong).foregroundStyle(Theme.ink))
+                    .overlay(Text("\(model.saved.completed.count)/\(PlanStep.allCases.count)").font(.wcCaptionStrong).foregroundStyle(Theme.ink)
+                        .dynamicTypeSize(...DynamicTypeSize.xxLarge))  // the ring is a fixed size
                 VStack(alignment: .leading, spacing: 2) {
                     Text(model.progress == 1 ? "All done" : "Steps to get your discount").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
                     Text(model.progress == 1 ? "Watch for a lower premium at renewal." : "Tap a step when it’s done.")
@@ -203,15 +204,25 @@ struct DashboardView: View {
                 }
                 .buttonStyle(SecondaryButtonStyle())
                 .accessibilityIdentifier("reminderButton")
+            } else {
+                Button("Change renewal date") {
+                    renewalPick = model.saved.policy.renewalDate ?? renewalPick
+                    pickRenewal = true
+                }
+                .font(.wcSubStrong)
+                .foregroundStyle(Theme.tealDeep)
             }
             if let reminderNote { Text(reminderNote).font(.wcCaption).foregroundStyle(Theme.muted) }
         }
     }
 
     private var renewalText: String {
-        guard let d = model.saved.policy.renewalDate else { return "We’ll nudge you 30 and 7 days before." }
-        let days = Calendar.current.dateComponents([.day], from: .now, to: d).day ?? 0
-        return "Renews \(d.formatted(date: .abbreviated, time: .omitted)) · \(max(days, 0)) days"
+        guard let saved = model.saved.policy.renewalDate else { return "We’ll nudge you 30 and 7 days before." }
+        let d = AppModel.nextRenewal(after: saved)
+        let cal = Calendar.current
+        let days = cal.dateComponents([.day], from: cal.startOfDay(for: .now), to: cal.startOfDay(for: d)).day ?? 0
+        let when = days == 0 ? "today" : days == 1 ? "tomorrow" : "in \(days) days"
+        return "Renews \(d.formatted(date: .abbreviated, time: .omitted)), \(when)"
     }
 
     private var renewalSheet: some View {
@@ -237,10 +248,20 @@ struct DashboardView: View {
     }
 
     private func setReminder() async {
-        guard let d = model.saved.policy.renewalDate else { return }
-        let ok = await ReminderService.schedule(renewal: d, savingsText: model.savingsText)
-        model.saved.reminderSet = ok
-        reminderNote = ok ? nil : "Notifications are off for WindCredit. Turn them on in Settings to get reminders."
+        guard let saved = model.saved.policy.renewalDate else { return }
+        let d = AppModel.nextRenewal(after: saved)
+        model.saved.policy.renewalDate = d
+        switch await ReminderService.schedule(renewal: d, savingsText: model.savingsPhrase) {
+        case .scheduled:
+            model.saved.reminderSet = true
+            reminderNote = nil
+        case .denied:
+            model.saved.reminderSet = false
+            reminderNote = "Notifications are off for WindCredit. Turn them on in Settings to get reminders."
+        case .tooLate:
+            model.saved.reminderSet = false
+            reminderNote = "Your renewal is less than a week away. Send your report to your agent now."
+        }
     }
 
     private var reportButton: some View {

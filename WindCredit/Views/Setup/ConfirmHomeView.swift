@@ -44,7 +44,7 @@ struct ConfirmHomeView: View {
                 if !(model.saved.record?.isNewConstruction ?? false) {
                     question("Was the roof replaced after March 2002?", hint: "A roofing permit from March 1, 2002 on (or an original roof on a 2004+ home) meets the Florida Building Code.") {
                         ForEach(YesNoUnsure.allCases) { v in
-                            ChoiceCard(title: v.title, detail: v == .yes ? "Roofing permit on or after 3/1/2002" : v == .no ? "Original or older roof" : "We’ll assume no",
+                            ChoiceCard(title: v.title, detail: roofAgeDetail(v),
                                        art: .roofAge(v),
                                        selected: model.saved.home.roofMeetsCode == v) {
                                 model.saved.home.roofMeetsCode = v
@@ -101,6 +101,14 @@ struct ConfirmHomeView: View {
             .font(.wcSub).foregroundStyle(Theme.ink)
             .padding(14)
             .background(Theme.mist, in: RoundedRectangle(cornerRadius: 14))
+    }
+
+    private func roofAgeDetail(_ answer: YesNoUnsure) -> String {
+        switch answer {
+        case .yes: "Roofing permit on or after 3/1/2002"
+        case .no: "Original or older roof"
+        case .notSure: "We’ll assume no"
+        }
     }
 
     private func question<Content: View>(_ title: String, hint: String?, @ViewBuilder content: () -> Content) -> some View {

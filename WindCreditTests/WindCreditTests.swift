@@ -122,9 +122,66 @@ final class PolicyParserTests: XCTestCase {
         XCTAssertTrue(p.noMitigationSectionFound)
     }
 
+    func testRejectsImpossibleDates() {
+        XCTAssertTrue(PolicyParser.dates(in: "13/01/2027 02/31/2027 00/10/2027").isEmpty)
+        XCTAssertEqual(PolicyParser.dates(in: "03/15/2027").count, 1)
+    }
+
+    func testTermsAndConditionsIsNotThePolicyTerm() {
+        let p = PolicyParser.parse(lines: ["SEE TERMS AND CONDITIONS 01/01/2020", "POLICY PERIOD: 03/15/2026 TO 03/15/2027"])
+        let year = Calendar(identifier: .gregorian).component(.year, from: try! XCTUnwrap(p.renewalDate))
+        XCTAssertEqual(year, 2027)
+    }
+
     func testIgnoresYearsAsAmounts() {
         XCTAssertNil(PolicyParser.firstDollar(in: " 2026"))
         XCTAssertEqual(PolicyParser.firstDollar(in: " $2,026"), 2_026)
+    }
+}
+
+@MainActor
+final class AppModelTests: XCTestCase {
+    func testRenewalRollsForwardToNextYear() {
+        let cal = Calendar.current
+        let lastYear = cal.date(byAdding: .day, value: -400, to: .now)!
+        let next = AppModel.nextRenewal(after: lastYear)
+        XCTAssertGreaterThanOrEqual(next, cal.startOfDay(for: .now))
+        XCTAssertLessThan(next, cal.date(byAdding: .year, value: 1, to: .now)!)
+        let future = cal.date(byAdding: .day, value: 30, to: .now)!
+        XCTAssertEqual(AppModel.nextRenewal(after: future), future)
+    }
+
+    func testPremiumChecks() {
+        XCTAssertNotNil(PolicyView.problem(total: "", wind: ""))
+        XCTAssertNotNil(PolicyView.problem(total: "57", wind: ""))
+        XCTAssertNotNil(PolicyView.problem(total: "5,716", wind: "9,000"))
+        XCTAssertNil(PolicyView.problem(total: "5,716", wind: "3,912"))
+        XCTAssertNil(PolicyView.problem(total: "$5716.00", wind: ""))
+    }
+
+    func testNewAddressClearsOldHousesAnswers() {
+        let model = AppModel()
+        model.eraseEverything()
+        model.setRecord(.sample)
+        model.saved.home.roofToWall = .clips
+        model.finishPolicy(PolicyInfo(totalPremium: 5_000))
+        var other = PropertyRecord.sample
+        other.parcelID = "06424736010470011"
+        model.setRecord(other)
+        XCTAssertEqual(model.saved.home.roofToWall, .notSure)
+        XCTAssertNil(model.saved.policy.totalPremium)
+        XCTAssertFalse(model.saved.policyDone)
+        model.eraseEverything()
+    }
+
+    func testSavingsPhraseIsLowercaseMidSentence() {
+        let model = AppModel()
+        model.eraseEverything()
+        model.setRecord(.sample)
+        model.finishPolicy(PolicyInfo(totalPremium: 5_716, hurricanePremium: 3_912))
+        XCTAssertTrue(model.savingsText.hasPrefix("Up to"))
+        XCTAssertTrue(model.savingsPhrase.hasPrefix("up to $"))
+        model.eraseEverything()
     }
 }
 

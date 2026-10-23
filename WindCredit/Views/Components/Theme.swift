@@ -112,6 +112,7 @@ struct Eyebrow: View {
     var color: Color = Theme.coral
     var body: some View {
         Text(text.uppercased()).font(.wcEyebrow).tracking(1.2).foregroundStyle(color)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 

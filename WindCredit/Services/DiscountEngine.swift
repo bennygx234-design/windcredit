@@ -77,7 +77,7 @@ struct DiscountEngine {
         let cPossible = max(cNow, credit(for: possible, newConstruction: isNew))
 
         let assumed = policy.hurricanePremium == nil
-        let wind = policy.hurricanePremium ?? total * (isNew ? Self.windShareNewer : Self.windShareOlder)
+        let wind = Self.windPremium(total: total, listed: policy.hurricanePremium, newConstruction: isNew)
 
         let (low, high) = range(wind: wind, from: cNow, to: cPossible)
 
@@ -116,7 +116,7 @@ struct DiscountEngine {
         let isNew = record.isNewConstruction
         let credited = policy.creditedFeatures
         let cNow = credit(for: credited, newConstruction: isNew)
-        let wind = policy.hurricanePremium ?? total * (isNew ? Self.windShareNewer : Self.windShareOlder)
+        let wind = Self.windPremium(total: total, listed: policy.hurricanePremium, newConstruction: isNew)
         var out: [MissingCredit] = []
         func add(_ id: String, _ title: String, _ why: String, unknown: Bool, _ apply: (inout MitigationFeatures) -> Void) {
             guard unknown else { return }
@@ -132,6 +132,10 @@ struct DiscountEngine {
         add("openings", "If windows are protected", "Impact windows or rated shutters on every opening.",
             unknown: home.openings == .notSure && Self.strength(credited.openings) == 0) { $0.openings = .hurricane }
         return out.sorted { $0.yearlyHigh > $1.yearlyHigh }
+    }
+
+    static func windPremium(total: Double, listed: Double?, newConstruction: Bool) -> Double {
+        listed ?? total * (newConstruction ? windShareNewer : windShareOlder)
     }
 
     // The dec-page wind premium already has cNow applied, so back it out first.
