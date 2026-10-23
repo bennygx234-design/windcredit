@@ -16,4 +16,4 @@ WindCredit helps Palm Beach County homeowners estimate hurricane-insurance (wind
 
 **Children.** WindCredit is meant for homeowners and isn't directed at children under 13.
 
-**Contact.** Questions: [your personal email]
+**Contact.** Questions: benjamingober1@gmail.com
