@@ -29,6 +29,7 @@
 		5327C27E424E75E363606F81 /* WCDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 36EE2D451FA3316612DBBC61 /* WCDisplay-Regular.ttf */; };
 		6E049BACA0E7E0F4DB4549FC /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AB52C8E4FC6FDBDBEFE2D65 /* ResultsView.swift */; };
 		7633A7A57BDBD8D0BDE808B9 /* WindCreditTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A738AFA384779FFE79F4373C /* WindCreditTests.swift */; };
+		7814CAB0C32D4E25F9490F95 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 010332BA52AF793301541C3D /* PrivacyInfo.xcprivacy */; };
 		8307FC9FB8F464EFBD44F6A7 /* Illustrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E20C66D7E0B41B6C0DA5B /* Illustrations.swift */; };
 		9F8A06554F1240F66F2CBCEC /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E4721940712986212D3FC0 /* AppModel.swift */; };
 		A2839D26B83D66E89F124153 /* SetupFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E86EB7E248A0BE176438E1A /* SetupFlow.swift */; };
@@ -59,6 +60,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		010332BA52AF793301541C3D /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		01B7C382DFDE8676F00429BE /* OFL-GoogleSans.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OFL-GoogleSans.txt"; sourceTree = "<group>"; };
 		104F2BD6CF7F914165C87442 /* DiscountEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscountEngine.swift; sourceTree = "<group>"; };
 		1E86EB7E248A0BE176438E1A /* SetupFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupFlow.swift; sourceTree = "<group>"; };
@@ -100,7 +102,7 @@
 		F8CBE01B7B9C6F2D499C0129 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		FB9FAB8A5BE2D30EB622D2DE /* WCText-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "WCText-Medium.ttf"; sourceTree = "<group>"; };
 		FD1160A5BE60E18A963C2DD1 /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
-		"TEMP_506C4625-65D4-4873-85DD-A2DE7E369F28" /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		"TEMP_C16554C6-B977-4932-ACDD-10418CB0A271" /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				BB631BD8E4A8D8442BA364DE /* Info.plist */,
+				010332BA52AF793301541C3D /* PrivacyInfo.xcprivacy */,
 				7B59D9114C0B36BBF9F4FA09 /* App */,
 				2864C169A77E046272B01CCC /* Models */,
 				9E2C0F33D0A29AF43B8F06C5 /* Resources */,
@@ -274,10 +277,10 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		"TEMP_DB3155FB-DC01-49D7-9929-B007B9678D1A" /* WindCredit */ = {
+		"TEMP_4B230EB2-E938-4D67-9DDE-B69EEF1305D2" /* WindCredit */ = {
 			isa = PBXGroup;
 			children = (
-				"TEMP_506C4625-65D4-4873-85DD-A2DE7E369F28" /* Config.xcconfig */,
+				"TEMP_C16554C6-B977-4932-ACDD-10418CB0A271" /* Config.xcconfig */,
 			);
 			path = WindCredit;
 			sourceTree = "<group>";
@@ -333,6 +336,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					D68349809FC0E2CAB7ACE01B = {
+						DevelopmentTeam = "$(WC_TEAM_ID)";
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 877B908EB88F7982C7484FA5 /* Build configuration list for PBXProject "WindCredit" */;
@@ -367,6 +374,7 @@
 				5028D29B1A088C4BABA7B03B /* OFL-Fraunces.txt in Resources */,
 				CD9FFBD9D566D4784EBA5E07 /* OFL-GoogleSans.txt in Resources */,
 				E3155E2BBBC11C3D33B027DF /* OFL-PlusJakartaSans.txt in Resources */,
+				7814CAB0C32D4E25F9490F95 /* PrivacyInfo.xcprivacy in Resources */,
 				026C7B99A4C294EEB681785D /* WCButton-Medium.ttf in Resources */,
 				5327C27E424E75E363606F81 /* WCDisplay-Regular.ttf in Resources */,
 				C12CF1E3E44F202A4D9770C5 /* WCDisplay-SemiBold.ttf in Resources */,
@@ -499,10 +507,12 @@
 		};
 		7A45CD1D118DC837FBDE2E96 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = "TEMP_506C4625-65D4-4873-85DD-A2DE7E369F28" /* Config.xcconfig */;
+			baseConfigurationReference = "TEMP_C16554C6-B977-4932-ACDD-10418CB0A271" /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "$(WC_TEAM_ID)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WindCredit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -517,10 +527,12 @@
 		};
 		981363C41971C5C5FB01EFFC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = "TEMP_506C4625-65D4-4873-85DD-A2DE7E369F28" /* Config.xcconfig */;
+			baseConfigurationReference = "TEMP_C16554C6-B977-4932-ACDD-10418CB0A271" /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "$(WC_TEAM_ID)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = WindCredit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

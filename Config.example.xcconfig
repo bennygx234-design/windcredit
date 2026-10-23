@@ -2,3 +2,6 @@
 // Free: create an "iOS" OAuth client at console.cloud.google.com for bundle ID com.bennygober.windcredit.
 GOOGLE_IOS_CLIENT_ID =
 GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.placeholder
+
+// Apple Developer team ID for archiving/TestFlight (Xcode ▸ Settings ▸ Accounts). Needs the paid program.
+WC_TEAM_ID =
