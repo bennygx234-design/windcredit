@@ -4,6 +4,9 @@
 # Apple ID signed in under Xcode ▸ Settings ▸ Accounts. Run from the repo root.
 set -euo pipefail
 
+TEAM_ID=$(grep -E '^WC_TEAM_ID' Config.xcconfig | sed 's/.*= *//')
+[ -n "$TEAM_ID" ] || { echo "Set WC_TEAM_ID in Config.xcconfig first."; exit 1; }
+
 BUILD="${1:-$(date +%Y%m%d%H%M)}"   # build number must go up on every upload
 OUT="build/release"
 
@@ -12,7 +15,9 @@ mkdir -p "$OUT"
 
 xcodebuild -project WindCredit.xcodeproj -scheme WindCredit -configuration Release \
   -destination 'generic/platform=iOS' -archivePath "$OUT/WindCredit.xcarchive" \
-  -allowProvisioningUpdates CURRENT_PROJECT_VERSION="$BUILD" archive
+  CURRENT_PROJECT_VERSION="$BUILD" CODE_SIGNING_ALLOWED=NO archive
+# Archive unsigned, then let the export step sign everything with the team's
+# distribution certificate and an App Store profile (no registered test devices needed).
 
 cat > "$OUT/ExportOptions.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -21,6 +26,7 @@ cat > "$OUT/ExportOptions.plist" <<PLIST
   <key>method</key><string>app-store-connect</string>
   <key>destination</key><string>upload</string>
   <key>signingStyle</key><string>automatic</string>
+  <key>teamID</key><string>$TEAM_ID</string>
   <key>manageAppVersionAndBuildNumber</key><false/>
 </dict></plist>
 PLIST
