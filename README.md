@@ -35,5 +35,10 @@ WindCredit costs nothing to use or run: no ads, no subscriptions, no servers.
 
 Estimates only, not insurance quotes.
 
+## Team
+Built by **Benjamin Gober** and **Yehonatan Shpalter** (Boca Raton, FL) for the 2026 Congressional App Challenge. We split the development work evenly.
+
 ## Built with AI assistance
-Parts of this app were written with help from Claude (Anthropic). The 2026 Challenge rules require disclosing all AI use and documenting open-source libraries (GoogleSignIn-iOS, Fraunces, Plus Jakarta Sans, Google Sans), and judges may ask for the source code, so be ready to explain how each part works.
+We used Claude, an AI assistant made by Anthropic, extensively while building WindCredit. It researched Florida insurance rules and public data sources and generated most of the Swift and SwiftUI code and in-app illustrations, based on our direction and design choices. We chose the problem and the design, made the decisions about features and accuracy, tested the app on real Palm Beach County addresses, and reviewed and fact-checked what it shows. Commits are co-credited to Claude and to both of us.
+
+Open-source software: GoogleSignIn-iOS; fonts Fraunces, Plus Jakarta Sans and Google Sans (SIL Open Font License). The 2026 Challenge rules require disclosing all AI use and documenting open-source libraries, and judges may ask for the source code, so be ready to explain how each part works.
