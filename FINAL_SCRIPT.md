@@ -81,3 +81,12 @@ Practice this one until you can say it without reading; judges score how well yo
 - [ ] YouTube title: `WindCredit | 2026 Congressional App Challenge`
 - [ ] Visibility: **Public**
 - [ ] Paste the YouTube link into chat so the submission agent can use it
+
+---
+
+## Camera details (quick reference)
+- **On camera (sections 1 and 6):** phone horizontal, tripod or a friend holding it, at your eye level, 5–6 feet away, framed waist up. Stand slightly left of center with the house or street on the right. Face the sun (morning or late afternoon). Hold still for 1 second before and after you talk.
+- **Street shots:** both hands, elbows tucked, move slowly. Roof: start low and tilt up. Shutters: close-up, slowly push in. Street: slow left-to-right turn. Phone: over-the-shoulder shot of your hand opening the app.
+- **Voiceover (sections 2–4):** closet or quiet room, Voice Memos app, phone 6 inches from your mouth, slightly below your chin. Pause between sentences. Slow down for section 4 and stay silent for 2 seconds after the dollar amount.
+- **Code (section 5):** QuickTime ▸ File ▸ New Screen Recording. In Xcode, Cmd + to make the code big, open `DiscountEngine.swift` line 63, and hold still on it for the last sentence.
+- **Everything:** Do Not Disturb on, lens wiped, 2–3 takes each, look at the lens, not the screen.
