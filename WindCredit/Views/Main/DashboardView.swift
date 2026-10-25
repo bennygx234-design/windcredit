@@ -92,6 +92,9 @@ struct DashboardView: View {
             ForEach(PlanStep.allCases) { step in
                 let done = model.saved.completed.contains(step)
                 let isNext = !done && PlanStep.allCases.first { !model.saved.completed.contains($0) } == step
+                // One container per row: when the links under the inspection step went away, the
+                // row was rebuilt mid-tap and the toggle fired twice (on, then straight back off).
+                VStack(alignment: .leading, spacing: 10) {
                 Button { withAnimation { model.toggle(step) } } label: {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: done ? "checkmark.circle.fill" : isNext ? "arrow.right.circle.fill" : "circle")
@@ -112,6 +115,7 @@ struct DashboardView: View {
                 .sensoryFeedback(.success, trigger: done)
                 .accessibilityIdentifier("step-\(step.rawValue)")
                 if step == .bookInspection && !done { inspectionLinks }
+                }
             }
         }
     }

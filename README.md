@@ -2,7 +2,7 @@
 
 An iPhone app that shows Palm Beach County homeowners which hurricane-insurance (wind-mitigation) discounts their home likely qualifies for but isn't getting. Built for the 2026 Congressional App Challenge.
 
-See [PLAN.md](PLAN.md) for the research and design, [CODE_TOUR.md](CODE_TOUR.md) to understand the code, [YOUR_BUILD.md](YOUR_BUILD.md) for the features to build yourself, [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md) for the demo video, and [SUBMISSION.md](SUBMISSION.md) for the submission checklist.
+See [VIDEO_PLAN.md](VIDEO_PLAN.md) for the video, [PLAN.md](PLAN.md) for the research and design, [CODE_TOUR.md](CODE_TOUR.md) to understand the code, [YOUR_BUILD.md](YOUR_BUILD.md) for the features to build yourself, [VIDEO_SCRIPT.md](VIDEO_SCRIPT.md) for the demo video, and [SUBMISSION.md](SUBMISSION.md) for the submission checklist.
 
 ## Run it
 1. `brew install xcodegen` (once), then `xcodegen generate`

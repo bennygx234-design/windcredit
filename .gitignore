@@ -4,3 +4,5 @@ Config.xcconfig
 DerivedData/
 build/
 .DS_Store
+VideoClips/0*.mp4
+VideoClips/cut/list.txt
