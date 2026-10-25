@@ -7,7 +7,9 @@ App footage, diagram, title and end cards are already made in `VideoClips/`.
 ## Filled in from your info
 - **Grade and school:** sophomore at David Posnack Day School (your site says Class of 2029).
 - **Why you:** co-founder and CTO of Praxelis, which builds AI tools for real estate businesses.
-- **Representative:** the close thanks "my representative" without a name, because ZIP 33496 is split between Rep. Frankel and Rep. Moskowitz and I don't know your street address. If you want to say the name, look it up at house.gov first.
+- **Representative:** Rep. Jared Moskowitz (FL23), confirmed from your home address when the entry was filed.
+- **Team:** you and Yehonatan Shpalter. The rules require the video to name every team member, so he is named in section 1 and should say the last line of section 6 on camera if he can.
+- **App footage:** re-recorded Oct 25 with the redesign (blue header, red/green cards). Same file names in `VideoClips/cut/`.
 
 ---
 
@@ -33,7 +35,7 @@ App footage, diagram, title and end cards are already made in `VideoClips/`.
 ## Script
 
 ### 1. Hook and intro (0:00–0:30) · ON CAMERA, in front of your house
-> "Here in Palm Beach County, families pay about six thousand three hundred dollars a year just to insure their home. That's more than almost anywhere in the country. But here's what most people don't know: a lot of them are paying more than they have to. I'm Benjamin Gober, a sophomore at David Posnack Day School, and I built WindCredit, an iPhone app that shows you how much money your home could be saving on insurance, and exactly how to get it."
+> "Here in Palm Beach County, families pay about six thousand three hundred dollars a year just to insure their home. That's more than almost anywhere in the country. But here's what most people don't know: a lot of them are paying more than they have to. I'm Benjamin Gober, a sophomore at David Posnack Day School, and with my teammate Yehonatan Shpalter, I built WindCredit, an iPhone app that shows you how much money your home could be saving on insurance, and exactly how to get it."
 
 **Then:** title card `G2_title.png` for 2 seconds.
 
@@ -51,12 +53,13 @@ On screen: `cut/D2_results.mp4`, then `cut/F_plan.mp4`, and your street pan on "
 
 ### 5. How it works (2:00–2:30) · VOICEOVER over the diagram, then Xcode
 On screen: `G1_how-it-works-diagram.png`, then your Xcode recording at line 63.
-> "Behind the scenes, the app does four things: it reads the house records, reads your insurance bill, looks up Florida's official discount chart, and turns the difference into dollars. The hardest part to figure out was that the discounts don't simply add up. A sloped roof saves forty-seven percent, roof straps save thirty-five, but together it's sixty-two, not eighty-two. So instead of adding, my code combines all your answers into one label, and looks up that exact match in the state's chart."
+> "Behind the scenes, the app does four things: it reads the house records, reads your insurance bill, looks up Florida's official discount chart, and turns the difference into dollars. The hardest part to figure out was that the discounts don't simply add up. A sloped roof saves forty-seven percent, roof straps save thirty-five, but together it's sixty-two, not eighty-two. So instead of adding, our code combines all your answers into one label, and looks up that exact match in the state's chart."
 
 Practice this one until you can say it without reading; judges score how well you understand it.
 
 ### 6. Why it matters and close (2:30–2:55) · ON CAMERA, on your street
-> "I co-founded a company called Praxelis that builds AI tools for real estate businesses, so I work with property records all the time. That's how I noticed these savings already exist by law, but almost nobody knows to ask for them. Next, I want to add Spanish and Haitian Creole, and cover all of Florida. I used AI to help build WindCredit, and I explained exactly how in my submission. Thank you to my representative for running the Congressional App Challenge."
+> "I co-founded a company called Praxelis that builds AI tools for real estate businesses, so I work with property records all the time. That's how I noticed these savings already exist by law, but almost nobody knows to ask for them. Next, I want to add Spanish and Haitian Creole, and cover all of Florida. We used AI to help build WindCredit, and we explained exactly how in our submission."
+> **Yehonatan (if he's on camera):** "Thank you to Representative Jared Moskowitz for running the Congressional App Challenge."
 
 **Then:** end card `G3_end.png` for 3 seconds.
 
@@ -66,7 +69,7 @@ Practice this one until you can say it without reading; judges score how well yo
 | When | Caption |
 |---|---|
 | 0:03 | $6,323 a year · Palm Beach County average (FL OIR, 2026) |
-| 0:20 | Benjamin Gober · Sophomore, David Posnack Day School |
+| 0:20 | Benjamin Gober & Yehonatan Shpalter |
 | 0:40 | Hip roof 47% · Shutters 44% · Roof straps 35% |
 | 1:05 | Live Palm Beach County public records |
 | 1:25 | Read on the phone · never uploaded |

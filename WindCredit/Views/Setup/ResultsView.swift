@@ -19,12 +19,14 @@ struct ResultsView: View {
             }
         }
         .background {
-            // same blue behind the nav bar as the header band
-            VStack(spacing: 0) {
-                Theme.teal.frame(height: 220)
-                Theme.background
+            // blue only behind the status and nav bar, matching the header band below it
+            GeometryReader { geo in
+                VStack(spacing: 0) {
+                    Theme.teal.frame(height: geo.safeAreaInsets.top)
+                    Theme.background
+                }
+                .ignoresSafeArea()
             }
-            .ignoresSafeArea()
         }
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
