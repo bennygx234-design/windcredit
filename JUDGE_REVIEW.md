@@ -94,3 +94,26 @@ Bugs found and fixed (6 new regression tests, 23 total passing):
 - **Grammar in reminders:** "You could save Up to $1,300" now reads "up to".
 
 Readability: named label lists in the parser, extracted helpers for a dense toggle and a nested ternary, removed a duplicated hurricane-premium formula, split crowded drawing code.
+
+## v6: presenter's run-through (Oct 25, day before deadline)
+
+Full flow re-run in the Simulator as a judge would see it on video (real address 1398 SW 18th St, live county data, sample declarations page scanned on-device). The math was re-checked by hand: 3,912 × 69.6% (hip + clips + hurricane openings, OIR-B1-1699) = 2,723, so $1,350–$2,050 after the 50–75% range.
+
+Fixed:
+1. **Google button showed "not turned on" when tapped** (biggest risk: reads as broken). It's now hidden until a client ID exists; the screen shows one "Save my plan" button.
+2. Money fields showed `385000`; now `385,000`.
+3. Neighborhood card popped in about 1 s late; it now shows a "Checking homes on your street…" placeholder.
+4. "OIR-B1-1699" no longer breaks across lines on the welcome card.
+5. Address suggestions no longer repeat ", United States".
+
+Added DEMO_RUN.md: the exact tap order, the numbers to say, and a fallback if the network is slow.
+
+### Rubric check without the video
+| Row | Status | Notes |
+|---|---|---|
+| Ideology | 5 | Local number, state law, real records |
+| Impact | 5 | Neighborhood card with live data, share with representative, grant check |
+| Function | 5 | Every screen works; no dead buttons; 23 tests; on TestFlight |
+| UI | 5 | Custom type, illustrations, animations, accessible at large text |
+| Code | depends on Benny | Must explain DiscountEngine and one challenge in his own words |
+| Structure | the video | Follow VIDEO_SCRIPT.md + DEMO_RUN.md, under 3:00 |

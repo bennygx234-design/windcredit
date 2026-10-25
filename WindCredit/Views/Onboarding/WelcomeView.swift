@@ -94,7 +94,7 @@ struct WelcomeView: View {
                 feature("Hurricane shutters or impact windows", "44%").reveal(0.35)
                 feature("Metal roof-to-wall clips", "35%").reveal(0.45)
             }
-            Text("Discount each one earns on its own, off the hurricane part of your premium (Florida’s credit table, OIR-B1-1699). Many homes qualify and never get them.")
+            Text("Discount each one earns on its own, off the hurricane part of your premium (Florida’s credit table, OIR‑B1‑1699). Many homes qualify and never get them.")
                 .font(.wcCaption).foregroundStyle(Theme.muted).lineSpacing(2)
                 .fixedSize(horizontal: false, vertical: true)
             Spacer()

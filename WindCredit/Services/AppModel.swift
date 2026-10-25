@@ -80,9 +80,13 @@ final class AppModel: ObservableObject {
     }
 
     /// Loads the neighborhood count once per home (sample home uses stored numbers).
+    @Published private(set) var loadingNeighborhood = false
+
     func loadNeighborhood() async {
         guard let r = saved.record, saved.neighborhood == nil else { return }
         if r.isSample { saved.neighborhood = .sample; return }
+        loadingNeighborhood = true
+        defer { loadingNeighborhood = false }
         saved.neighborhood = try? await NeighborhoodService().load(latitude: r.latitude, longitude: r.longitude)
     }
 

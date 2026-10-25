@@ -10,13 +10,15 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("Account") {
-                    if let name = auth.firstName {
-                        LabeledContent("Signed in as", value: auth.email ?? name)
-                        Button("Sign out") { auth.signOut(); dismiss() }
-                    } else {
-                        LabeledContent("Google", value: "Not connected")
-                        Button("Sign in with Google") { auth.signOut(); dismiss() }
+                if AuthService.isGoogleConfigured {
+                    Section("Account") {
+                        if let name = auth.firstName {
+                            LabeledContent("Signed in as", value: auth.email ?? name)
+                            Button("Sign out") { auth.signOut(); dismiss() }
+                        } else {
+                            LabeledContent("Google", value: "Not connected")
+                            Button("Sign in with Google") { auth.signOut(); dismiss() }
+                        }
                     }
                 }
 
