@@ -4,9 +4,10 @@
 
 App footage, diagram, title and end cards are already made in `VideoClips/`.
 
-## Before you film, check 2 things
-1. **Grade:** the script says "junior." Change it if that's wrong.
-2. **Representative:** look up your street address at house.gov. The script says Moskowitz; change it to Frankel if that's your district.
+## Filled in from your info
+- **Grade and school:** sophomore at David Posnack Day School (your site says Class of 2029).
+- **Why you:** co-founder and CTO of Praxelis, which builds AI tools for real estate businesses.
+- **Representative:** the close thanks "my representative" without a name, because ZIP 33496 is split between Rep. Frankel and Rep. Moskowitz and I don't know your street address. If you want to say the name, look it up at house.gov first.
 
 ---
 
@@ -32,7 +33,7 @@ App footage, diagram, title and end cards are already made in `VideoClips/`.
 ## Script
 
 ### 1. Hook and intro (0:00–0:30) · ON CAMERA, in front of your house
-> "Here in Palm Beach County, families pay about six thousand three hundred dollars a year just to insure their home. That's more than almost anywhere in the country. But here's what most people don't know: a lot of them are paying more than they have to. I'm Benjamin Gober, a junior at David Posnack Jewish Day School, and I built WindCredit, an iPhone app that shows you how much money your home could be saving on insurance, and exactly how to get it."
+> "Here in Palm Beach County, families pay about six thousand three hundred dollars a year just to insure their home. That's more than almost anywhere in the country. But here's what most people don't know: a lot of them are paying more than they have to. I'm Benjamin Gober, a sophomore at David Posnack Day School, and I built WindCredit, an iPhone app that shows you how much money your home could be saving on insurance, and exactly how to get it."
 
 **Then:** title card `G2_title.png` for 2 seconds.
 
@@ -55,7 +56,7 @@ On screen: `G1_how-it-works-diagram.png`, then your Xcode recording at line 63.
 Practice this one until you can say it without reading; judges score how well you understand it.
 
 ### 6. Why it matters and close (2:30–2:55) · ON CAMERA, on your street
-> "I built WindCredit in Swift, Apple's programming language. I live here in Boca, and I see how much hurricane insurance costs the families around me. These savings already exist by law; people just don't know about them. Next, I want to add Spanish and Haitian Creole, and cover all of Florida. I used AI to help build this, and I explained exactly how in my submission. Thank you, Representative Moskowitz, for running the Congressional App Challenge."
+> "I co-founded a company called Praxelis that builds AI tools for real estate businesses, so I work with property records all the time. That's how I noticed these savings already exist by law, but almost nobody knows to ask for them. Next, I want to add Spanish and Haitian Creole, and cover all of Florida. I used AI to help build WindCredit, and I explained exactly how in my submission. Thank you to my representative for running the Congressional App Challenge."
 
 **Then:** end card `G3_end.png` for 3 seconds.
 
@@ -65,7 +66,7 @@ Practice this one until you can say it without reading; judges score how well yo
 | When | Caption |
 |---|---|
 | 0:03 | $6,323 a year · Palm Beach County average (FL OIR, 2026) |
-| 0:20 | Benjamin Gober · David Posnack Jewish Day School |
+| 0:20 | Benjamin Gober · Sophomore, David Posnack Day School |
 | 0:40 | Hip roof 47% · Shutters 44% · Roof straps 35% |
 | 1:05 | Live Palm Beach County public records |
 | 1:25 | Read on the phone · never uploaded |
