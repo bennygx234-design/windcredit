@@ -16,15 +16,13 @@ struct ChoiceCard: View {
                     .padding(.bottom, 4)
                 Text(title).font(.wcSubStrong).foregroundStyle(Theme.ink)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(detail).font(.wcCaption).foregroundStyle(Theme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
             }
             .padding(14)
-            .frame(maxWidth: .infinity, minHeight: 172, alignment: .topLeading)
-            .background(selected ? Theme.mist : Theme.card, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(selected ? Theme.teal : Theme.line, lineWidth: selected ? 2 : 1))
+            .frame(maxWidth: .infinity, minHeight: 134, alignment: .topLeading)
+            .background(selected ? Theme.mist : Theme.card, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(selected ? Theme.teal : Theme.line, lineWidth: selected ? 3 : 1))
             .overlay(alignment: .topTrailing) {
                 if selected {
                     Image(systemName: "checkmark.circle.fill").font(.system(size: 20)).foregroundStyle(Theme.teal).padding(10)
@@ -36,6 +34,7 @@ struct ChoiceCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+        .accessibilityHint(detail)
         .accessibilityAddTraits(selected ? .isSelected : [])
         .sensoryFeedback(.selection, trigger: selected)
     }

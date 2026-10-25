@@ -50,10 +50,7 @@ struct DashboardView: View {
     }
 
     private var greeting: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Eyebrow(text: model.saved.record?.displayAddress ?? "Your home", color: Theme.muted)
-            Text(auth.firstName.map { "\($0)’s plan" } ?? "Your plan").font(.wcTitle).foregroundStyle(Theme.ink)
-        }
+        Text(auth.firstName.map { "\($0)’s plan" } ?? "Your plan").font(.wcTitle).foregroundStyle(Theme.ink)
     }
 
     private var savingsCard: some View {
@@ -70,7 +67,7 @@ struct DashboardView: View {
             }
             .padding(22)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.tealDeep, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+            .background(Theme.teal, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("savingsCard")
@@ -82,11 +79,7 @@ struct DashboardView: View {
                 ProgressRing(progress: model.progress).frame(width: 56, height: 56)
                     .overlay(Text("\(model.saved.completed.count)/\(PlanStep.allCases.count)").font(.wcCaptionStrong).foregroundStyle(Theme.ink)
                         .dynamicTypeSize(...DynamicTypeSize.xxLarge))  // the ring is a fixed size
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(model.progress == 1 ? "All done" : "Steps to get your discount").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
-                    Text(model.progress == 1 ? "Watch for a lower premium at renewal." : "Tap a step when it’s done.")
-                        .font(.wcSub).foregroundStyle(Theme.muted)
-                }
+                Text(model.progress == 1 ? "All done" : "Steps to get your discount").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
             }
             Divider().overlay(Theme.line)
             ForEach(PlanStep.allCases) { step in
@@ -99,14 +92,11 @@ struct DashboardView: View {
                     HStack(alignment: .top, spacing: 12) {
                         Image(systemName: done ? "checkmark.circle.fill" : isNext ? "arrow.right.circle.fill" : "circle")
                             .font(.system(size: 22))
-                            .foregroundStyle(done ? Theme.teal : isNext ? Theme.coral : Theme.line)
+                            .foregroundStyle(done ? Theme.green : isNext ? Theme.teal : Theme.line)
                             .contentTransition(.symbolEffect(.replace))
                             .symbolEffect(.bounce, value: done)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(step.title).font(isNext ? .wcHeadline : .wcBodyMedium)
-                                .foregroundStyle(done ? Theme.muted : Theme.ink).strikethrough(done)
-                            Text(step.detail).font(.wcCaption).foregroundStyle(Theme.muted)
-                        }
+                        Text(step.title).font(isNext ? .wcHeadline : .wcBodyMedium)
+                            .foregroundStyle(done ? Theme.muted : Theme.ink).strikethrough(done)
                         Spacer()
                     }
                     .contentShape(Rectangle())
@@ -138,7 +128,7 @@ struct DashboardView: View {
     @ViewBuilder private var neighborhoodCard: some View {
         if model.saved.neighborhood == nil && model.loadingNeighborhood {
             Card {
-                Eyebrow(text: "Your neighborhood", color: Theme.tealDeep)
+                Text("Your neighborhood").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
                 HStack(spacing: 10) {
                     ProgressView()
                     Text("Checking homes on your street…").font(.wcSub).foregroundStyle(Theme.muted)
@@ -146,7 +136,7 @@ struct DashboardView: View {
             }
         } else if let n = model.saved.neighborhood, n.homes > 0, let r = model.saved.record {
             Card {
-                Eyebrow(text: "Your neighborhood", color: Theme.tealDeep)
+                Text("Your neighborhood").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
                     Text("\(Int((n.olderShare * 100).rounded()))%").font(.wcFigure(40)).foregroundStyle(Theme.ink)
                     Text("of the \(n.homes) homes within a quarter mile were built before the 2002 building code")

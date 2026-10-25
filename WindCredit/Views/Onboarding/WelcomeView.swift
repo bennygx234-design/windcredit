@@ -2,150 +2,100 @@ import SwiftUI
 
 struct WelcomeView: View {
     @EnvironmentObject var model: AppModel
-    @State private var page = 0
-    private let count = 3
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Text("WindCredit").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
-                Spacer()
-                Button("Skip") { finish() }
-                    .font(.wcBodyMedium)
-                    .foregroundStyle(Theme.muted)
-                    .accessibilityIdentifier("skipIntro")
-            }
-            .padding(.horizontal, 24)
-            .padding(.top, 8)
-
-            TabView(selection: $page) {
-                page(premiumCard).tag(0)
-                page(lawCard).tag(1)
-                page(howCard).tag(2)
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-
-            HStack(spacing: 8) {
-                ForEach(0..<count, id: \.self) { i in
-                    Capsule().fill(i == page ? Theme.teal : Theme.line)
-                        .frame(width: i == page ? 22 : 8, height: 8)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                HeaderBand {
+                    HStack(spacing: 10) {
+                        Image(systemName: "house.fill")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(Theme.teal)
+                            .frame(width: 40, height: 40)
+                            .background(.white, in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+                            .accessibilityHidden(true)
+                        Text("WindCredit").font(.wcHeading)
+                    }
+                    Text("Find the hurricane discounts your home is missing")
+                        .font(.wcTitle)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 6)
+                    HStack(spacing: 8) {
+                        HeaderChip(text: "Free")
+                        HeaderChip(text: "Palm Beach County")
+                        HeaderChip(text: "Florida law")
+                    }
+                    .padding(.bottom, 30)
                 }
-            }
-            .animation(.spring(duration: 0.3), value: page)
-            .padding(.bottom, 18)
 
-            Button(page == count - 1 ? "Check my home" : "Next") {
-                if page == count - 1 { finish() } else { withAnimation { page += 1 } }
+                premiumCard
+                    .padding(.horizontal, 18)
+                    .padding(.top, -40)
+
+                Text("Discounts Florida requires")
+                    .font(.wcHeading).foregroundStyle(Theme.ink)
+                    .padding(.horizontal, 20).padding(.top, 24).padding(.bottom, 12)
+
+                LazyVGrid(columns: columns, spacing: 10) {
+                    tile("Hip roof", "47%", icon: "house.fill", color: Theme.orange).reveal(0.1)
+                    tile("Shutters", "44%", icon: "square.grid.2x2.fill", color: Theme.purple).reveal(0.2)
+                    tile("Roof clips", "35%", icon: "link", color: Theme.tealTile).reveal(0.3)
+                }
+                .padding(.horizontal, 18)
+
+                Text("Florida OIR-B1-1699. Average from OIR, July 2026.")
+                    .font(.wcCaption).foregroundStyle(Theme.muted)
+                    .padding(.horizontal, 20).padding(.top, 12).padding(.bottom, 20)
             }
-            .buttonStyle(PrimaryButtonStyle())
-            .padding(.horizontal, 20)
-            .padding(.bottom, 12)
-            .accessibilityIdentifier("introNext")
         }
-        .background(Theme.background.ignoresSafeArea())
-    }
-
-    /// Centers a card vertically, but scrolls instead of cutting text off at large text sizes.
-    private func page<Card: View>(_ card: Card) -> some View {
-        GeometryReader { geo in
-            ScrollView {
-                card
-                    .frame(maxWidth: .infinity, minHeight: geo.size.height, alignment: .leading)
+        .background {
+            // brand color behind the status bar, so the header band runs to the top edge
+            VStack(spacing: 0) {
+                Theme.teal.frame(height: 150)
+                Theme.background
             }
-            .scrollBounceBehavior(.basedOnSize)
-            // fade text that scrolls under the page dots
-            .mask(LinearGradient(stops: [.init(color: .black, location: 0.97), .init(color: .clear, location: 1)],
-                                 startPoint: .top, endPoint: .bottom))
+            .ignoresSafeArea()
+        }
+        .safeAreaInset(edge: .bottom) {
+            BottomBar {
+                Button("Check my house") { finish() }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .accessibilityIdentifier("introNext")
+            }
         }
     }
 
     private var premiumCard: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Spacer()
-            Eyebrow(text: "Palm Beach County · 2026")
-            CountUp(values: [6_323], font: .wcFigure(84), delay: 0.25)
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-            Text("is the average yearly home insurance bill here, wind coverage included.")
-                .font(.wcHeading)
-                .foregroundStyle(Theme.ink)
-                .fixedSize(horizontal: false, vertical: true)
-            Text("About half of a typical Florida premium pays for hurricane coverage, and that’s the part you can shrink.")
-                .font(.wcBody).foregroundStyle(Theme.muted).lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-            Spacer()
-            Text("Sources: Florida OIR Property Insurance Stability Report, July 2026; Brookings, 2026")
-                .font(.wcCaption).foregroundStyle(Theme.muted)
-                .padding(.bottom, 16)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.horizontal, 28)
-    }
-
-    private var lawCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Spacer(minLength: 8)
-            HouseIllustration(shape: .hip).frame(height: 160).frame(maxWidth: .infinity).reveal(0.1)
-            Text("Florida law says storm-strong homes pay less")
-                .font(.wcTitle).foregroundStyle(Theme.ink)
-                .fixedSize(horizontal: false, vertical: true)
-            VStack(spacing: 10) {
-                feature("Hip roof", "47%").reveal(0.25)
-                feature("Hurricane shutters or impact windows", "44%").reveal(0.35)
-                feature("Metal roof-to-wall clips", "35%").reveal(0.45)
+        HStack(spacing: 14) {
+            IconBadge(systemImage: "chart.line.uptrend.xyaxis", color: Theme.coral, size: 46)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("Average home insurance here").font(.wcCaption).foregroundStyle(Theme.muted)
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    CountUp(values: [6_323], font: .wcFigure(28), color: Theme.ink, delay: 0.25)
+                    Text("a year").font(.wcSubStrong).foregroundStyle(Theme.muted)
+                }
             }
-            Text("Discount each one earns on its own, off the hurricane part of your premium (Florida’s credit table, OIR‑B1‑1699). Many homes qualify and never get them.")
-                .font(.wcCaption).foregroundStyle(Theme.muted).lineSpacing(2)
-                .fixedSize(horizontal: false, vertical: true)
-            Spacer()
+            Spacer(minLength: 0)
         }
-        .padding(.horizontal, 28)
+        .padding(16)
+        .background(Theme.card, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .shadow(color: .black.opacity(0.10), radius: 12, y: 4)
     }
 
-    private func feature(_ name: String, _ value: String) -> some View {
-        HStack {
-            Text(name).font(.wcSub).foregroundStyle(Theme.ink).fixedSize(horizontal: false, vertical: true)
-            Spacer()
-            Text(value).font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
+    private func tile(_ name: String, _ value: String, icon: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: icon).font(.system(size: 22, weight: .semibold)).accessibilityHidden(true)
+            Spacer(minLength: 12)
+            Text(value).font(.wcFigure(26))
+            Text(name).font(.wcSubStrong).opacity(0.95)
         }
-        .padding(.horizontal, 14).padding(.vertical, 11)
-        .background(Theme.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Theme.line))
-    }
-
-    private var howCard: some View {
-        VStack(alignment: .leading, spacing: 22) {
-            Spacer()
-            Text("Find yours in about two minutes")
-                .font(.wcTitle).foregroundStyle(Theme.ink)
-                .fixedSize(horizontal: false, vertical: true)
-            step(1, "Type your address", "We pull your home from county records.").reveal(0.1)
-            step(2, "Answer four picture questions", "Roof, straps, windows. “Not sure” is fine.").reveal(0.25)
-            step(3, "Scan your policy", "Read on your phone. Never uploaded.").reveal(0.4)
-            Text("Then see what you’re missing, in dollars, and exactly what to do next.")
-                .font(.wcBody).foregroundStyle(Theme.muted).lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-            Label("Free. No ads, no subscriptions, no account needed.", systemImage: "checkmark.seal")
-                .font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
-                .fixedSize(horizontal: false, vertical: true)
-                .reveal(0.55)
-            Spacer()
-        }
-        .padding(.horizontal, 28)
-    }
-
-    private func step(_ n: Int, _ title: String, _ detail: String) -> some View {
-        HStack(alignment: .top, spacing: 16) {
-            Text("\(n)")
-                .font(.wcFigure(22))
-                .foregroundStyle(.white)
-                .frame(width: 42, height: 42)
-                .background(n == 3 ? Theme.coral : Theme.teal, in: Circle())
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title).font(.wcHeadline).foregroundStyle(Theme.ink).fixedSize(horizontal: false, vertical: true)
-                Text(detail).font(.wcSub).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
-            }
-        }
+        .foregroundStyle(.white)
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 118, alignment: .leading)
+        .background(color, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 
     private func finish() { model.saved.hasSeenIntro = true }

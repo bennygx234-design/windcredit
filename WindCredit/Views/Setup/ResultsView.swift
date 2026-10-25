@@ -11,43 +11,28 @@ struct ResultsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 22) {
-                if let e = model.estimate, model.needsInspectionToKnow {
-                    unknownHeadline
-                    whatIfList.reveal(0.15)
-                    if let g = model.grant { grantCard(g).reveal(0.3) }
-                    assumptions(e)
-                    Button { showHow = true } label: {
-                        Label("How WindCredit works", systemImage: "gearshape.2")
-                    }
-                    .buttonStyle(PillButtonStyle())
-                } else if let e = model.estimate {
-                    headline(e)
-                    if e.hasSavings {
-                        premiumBars(e).reveal(0.15)
-                        payback(e).reveal(0.25)
-                    }
-                    if !e.missing.isEmpty { missingList(e).reveal(0.35) }
-                    if let g = model.grant { grantCard(g).reveal(0.45) }
-                    assumptions(e).reveal(0.5)
-                    Button { showHow = true } label: {
-                        Label("How WindCredit works", systemImage: "gearshape.2")
-                    }
-                    .buttonStyle(PillButtonStyle())
-                    .accessibilityIdentifier("howItWorks")
-                } else {
-                    ContentUnavailableView("Add your premium", systemImage: "doc.text",
-                                           description: Text("We need your yearly premium to estimate dollars."))
+            VStack(alignment: .leading, spacing: 0) {
+                if let e = model.estimate {
+                    HeaderBand { model.needsInspectionToKnow ? AnyView(unknownHeadline) : AnyView(headline(e)) }
                 }
+                content.padding(20)
             }
-            .padding(20)
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background {
+            // same blue behind the nav bar as the header band
+            VStack(spacing: 0) {
+                Theme.teal.frame(height: 220)
+                Theme.background
+            }
+            .ignoresSafeArea()
+        }
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .safeAreaInset(edge: .bottom) {
             if isSetup {
                 BottomBar {
                     Button("Make my plan") { model.saved.setupDone = true }
-                        .buttonStyle(PrimaryButtonStyle(color: Theme.coral))
+                        .buttonStyle(PrimaryButtonStyle())
                         .accessibilityIdentifier("makePlan")
                 }
             }
@@ -57,129 +42,163 @@ struct ResultsView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    @ViewBuilder private var content: some View {
+            VStack(alignment: .leading, spacing: 16) {
+                if let e = model.estimate, model.needsInspectionToKnow {
+                    whatIfList.reveal(0.15)
+                    if let g = model.grant { grantCard(g).reveal(0.3) }
+                    assumptions(e)
+                    Button { showHow = true } label: {
+                        Label("How WindCredit works", systemImage: "gearshape.2")
+                    }
+                    .buttonStyle(PillButtonStyle())
+                } else if let e = model.estimate {
+                    if e.hasSavings {
+                        premiumBars(e).reveal(0.15)
+                        payback(e).reveal(0.25)
+                    }
+                    if !e.missing.isEmpty { missingList(e).reveal(0.35) }
+                    if let g = model.grant { grantCard(g).reveal(0.45) }
+                    sources.reveal(0.5)
+                    assumptions(e).reveal(0.5)
+                    Button { showHow = true } label: {
+                        Label("How WindCredit works", systemImage: "gearshape.2")
+                    }
+                    .buttonStyle(PillButtonStyle())
+                    .accessibilityIdentifier("howItWorks")
+                } else {
+                    ContentUnavailableView("Add your premium", systemImage: "doc.text")
+                }
+            }
+    }
+
     private func headline(_ e: DiscountEngine.Estimate) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Eyebrow(text: e.hasSavings ? "Your estimate" : "Good news")
+        VStack(alignment: .leading, spacing: 4) {
             if e.hasSavings {
-                CountUp(values: [e.missedLow, e.missedHigh], font: .wcFigure(54))
+                Text("You could save").font(.wcSubStrong).opacity(0.9)
+                CountUp(values: [e.missedLow, e.missedHigh], font: .wcFigure(44), color: .white)
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .accessibilityIdentifier("savingsRange")
-                Text("a year in hurricane discounts your home likely qualifies for but isn’t getting")
-                    .font(.wcBody).foregroundStyle(Theme.ink).lineSpacing(3)
-                    .fixedSize(horizontal: false, vertical: true)
+                Text("a year on hurricane insurance").font(.wcSub).opacity(0.9)
             } else {
-                Text("You’re already getting the discounts your answers show")
-                    .font(.wcTitle).foregroundStyle(Theme.ink)
-                Text("An inspection could still find more, like how the roof deck is nailed down.")
-                    .font(.wcBody).foregroundStyle(Theme.muted)
+                Text("You already have your discounts").font(.wcTitle)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
 
     private var unknownHeadline: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Eyebrow(text: "Not sure yet")
-            CountUp(values: [model.whatIf.first?.yearlyHigh ?? 0], prefix: "Up to ", font: .wcFigure(54))
+        VStack(alignment: .leading, spacing: 4) {
+            Text("You could save").font(.wcSubStrong).opacity(0.9)
+            CountUp(values: [model.whatIf.first?.yearlyHigh ?? 0], prefix: "Up to ", font: .wcFigure(44), color: .white)
                 .minimumScaleFactor(0.5).lineLimit(1)
                 .accessibilityIdentifier("savingsRange")
-            Text("a year is possible. You weren’t sure about some features, and an inspection is how you find out.")
-                .font(.wcBody).foregroundStyle(Theme.ink).lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
+            Text("a year. An inspection tells you for sure.").font(.wcSub).opacity(0.9)
         }
     }
 
     private var whatIfList: some View {
         Card {
-            Text("What each one is worth to you").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
+            Text("What each one is worth").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
             ForEach(model.whatIf) { m in
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: "questionmark.circle.fill").foregroundStyle(Theme.coral).font(.system(size: 20))
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(m.title).font(.wcHeadline).foregroundStyle(Theme.ink)
-                            Spacer()
-                            Text("up to \(AppModel.money(m.yearlyHigh))").font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
-                        }
-                        Text(m.why).font(.wcSub).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
-                    }
-                }
+                creditRow(m)
                 if m.id != model.whatIf.last?.id { Divider().overlay(Theme.line) }
             }
-            Text("A $\(Self.inspectionCost) inspection checks all of these at once. Go back to change an answer if you know it.")
-                .font(.wcCaption).foregroundStyle(Theme.muted)
         }
     }
 
     private func premiumBars(_ e: DiscountEngine.Estimate) -> some View {
         let now = e.windPremium
         let after = max(now - Double(e.missedLow + e.missedHigh) / 2, 0)
-        return Card {
-            Text("Hurricane part of your premium").font(.wcSubStrong).foregroundStyle(Theme.ink)
-            bar("Now", now, of: now, color: Theme.coral, delay: 0.3)
-            bar("With discounts", after, of: now, color: Theme.teal, delay: 0.55)
-            if e.windPremiumWasAssumed {
-                Text("Estimated from your total premium. Add the hurricane premium from your policy for a sharper number.")
-                    .font(.wcCaption).foregroundStyle(Theme.muted)
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 10) {
+                compareCard("Now", now, color: Theme.coral)
+                compareCard("With discounts", after, color: Theme.green)
             }
+            Text(e.windPremiumWasAssumed ? "Hurricane premium a year, estimated" : "Hurricane premium a year")
+                .font(.wcCaption).foregroundStyle(Theme.muted)
         }
     }
 
-    private func bar(_ label: String, _ value: Double, of maxValue: Double, color: Color, delay: Double) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text(label).font(.wcCaption).foregroundStyle(Theme.muted)
-                Spacer()
-                Text(AppModel.money(Int(value))).font(.wcSubStrong).foregroundStyle(Theme.ink)
-            }
-            GrowingBar(fraction: value / max(maxValue, 1), color: color, delay: delay)
+    private func compareCard(_ label: String, _ value: Double, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(label).font(.wcCaptionStrong).foregroundStyle(.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12).padding(.vertical, 7)
+                .background(color)
+            Text(AppModel.money(Int(value))).font(.wcFigure(26)).foregroundStyle(Theme.ink)
+                .monospacedDigit()
+                .padding(12)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color, lineWidth: 2))
         .accessibilityElement(children: .combine)
     }
 
     private func payback(_ e: DiscountEngine.Estimate) -> some View {
         let weekly = Double(e.missedLow) / 52
         let weeks = weekly > 0 ? Int((Double(Self.inspectionCost) / weekly).rounded(.up)) : 0
-        return HStack(alignment: .top, spacing: 14) {
-            Image(systemName: "clock.arrow.circlepath").font(.system(size: 22)).foregroundStyle(Theme.coral)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Worth it in about \(max(weeks, 1)) week\(weeks == 1 ? "" : "s")").font(.wcHeadline).foregroundStyle(Theme.ink)
-                Text("A typical $\(Self.inspectionCost) wind-mitigation inspection pays for itself that fast, even at the low end of your estimate.")
-                    .font(.wcSub).foregroundStyle(Theme.muted)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
+        return HStack(spacing: 12) {
+            Image(systemName: "clock.arrow.circlepath").font(.system(size: 22, weight: .semibold)).foregroundStyle(Color(light: 0x92400E, dark: 0xFCD34D))
+            Text("A $\(Self.inspectionCost) inspection pays for itself in about \(max(weeks, 1)) week\(weeks == 1 ? "" : "s")")
+                .font(.wcSubStrong).foregroundStyle(Theme.ink)
+                .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(18)
+        .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.sand, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .background(Theme.sand, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private func missingList(_ e: DiscountEngine.Estimate) -> some View {
         Card {
-            Text("Discounts you’re likely missing").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
+            Text("Discounts you’re missing").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
             ForEach(e.missing) { m in
-                HStack(alignment: .top, spacing: 12) {
-                    Image(systemName: "plus.circle.fill").foregroundStyle(Theme.coral).font(.system(size: 20))
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(m.title).font(.wcHeadline).foregroundStyle(Theme.ink)
-                            Spacer()
-                            Text("up to \(AppModel.money(m.yearlyHigh))").font(.wcSubStrong).foregroundStyle(Theme.tealDeep)
-                        }
-                        Text(m.why).font(.wcSub).foregroundStyle(Theme.muted)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                }
+                creditRow(m)
                 if m.id != e.missing.last?.id { Divider().overlay(Theme.line) }
             }
-            Text("Discounts overlap, so these don’t add up to the total.")
+            Text("They overlap, so they don’t add up.")
                 .font(.wcCaption).foregroundStyle(Theme.muted)
         }
     }
 
+    private func creditRow(_ m: DiscountEngine.MissingCredit) -> some View {
+        let (icon, color): (String, Color) = switch m.id {
+        case "hip": ("house.fill", Theme.orange)
+        case "roofToWall": ("link", Theme.tealTile)
+        case "openings": ("square.grid.2x2.fill", Theme.purple)
+        case "roofCover": ("hammer.fill", Theme.teal)
+        default: ("shield.fill", Theme.tealDeep)
+        }
+        return HStack(spacing: 12) {
+            IconBadge(systemImage: icon, color: color, size: 38)
+            Text(m.title.replacingOccurrences(of: " credit", with: ""))
+                .font(.wcHeadline).foregroundStyle(Theme.ink)
+                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Text("up to \(AppModel.money(m.yearlyHigh))").font(.wcSubStrong).foregroundStyle(Theme.green)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityHint(m.why)
+    }
+
+    private var sources: some View {
+        HStack(spacing: 6) {
+            Text("Data").font(.wcCaptionStrong).foregroundStyle(Theme.muted)
+            ForEach(["Florida OIR-B1-1699", "County records", "Your policy"], id: \.self) { s in
+                Text(s).font(.wcCaption).foregroundStyle(Theme.ink)
+                    .padding(.horizontal, 7).padding(.vertical, 3)
+                    .background(Theme.line, in: RoundedRectangle(cornerRadius: 6))
+            }
+        }
+        .lineLimit(1).minimumScaleFactor(0.8)
+    }
+
     private func grantCard(_ g: GrantEligibility) -> some View {
         let (icon, title, body, color): (String, String, String, Color) = switch g {
-        case .likely: ("checkmark.seal.fill", "You may qualify for a free inspection", "My Safe Florida Home, the state program, offers free inspections. Low- and moderate-income owners can also get grants up to $10,000 for upgrades.", Theme.tealDeep)
+        case .likely: ("checkmark.seal.fill", "You may get a free inspection", "From My Safe Florida Home, plus grants up to $10,000.", Theme.green)
         case .maybe(let why): ("questionmark.circle.fill", "You might qualify for My Safe Florida Home", why, Theme.ink)
         case .no(let why): ("info.circle.fill", "My Safe Florida Home probably isn’t for you", why, Theme.ink)
         }

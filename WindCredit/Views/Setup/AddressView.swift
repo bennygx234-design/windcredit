@@ -12,8 +12,7 @@ struct AddressView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                ScreenHeader(step: "Step 1 of 3", title: "What’s your address?",
-                             subtitle: "We look up your home in Palm Beach County’s public records.")
+                ScreenHeader(step: 1, title: "What’s your address?")
 
                 HStack {
                     Image(systemName: "magnifyingglass").foregroundStyle(Theme.muted)

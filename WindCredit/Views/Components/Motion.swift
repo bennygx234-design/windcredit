@@ -50,29 +50,6 @@ struct CountUp: View {
     }
 }
 
-struct GrowingBar: View {
-    let fraction: Double
-    let color: Color
-    var delay: Double = 0.2
-    @State private var grown = false
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
-    var body: some View {
-        GeometryReader { g in
-            ZStack(alignment: .leading) {
-                Capsule().fill(Theme.sand)
-                Capsule().fill(color)
-                    .frame(width: max(12, g.size.width * (grown ? fraction : 0.02)))
-            }
-        }
-        .frame(height: 12)
-        .onAppear {
-            if reduceMotion { grown = true; return }
-            withAnimation(.spring(duration: 0.9, bounce: 0.1).delay(delay)) { grown = true }
-        }
-    }
-}
-
 struct LookupAnimation: View {
     @State private var blowing = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion

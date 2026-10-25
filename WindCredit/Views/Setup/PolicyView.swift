@@ -23,8 +23,9 @@ struct PolicyView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                ScreenHeader(step: "Step 3 of 3", title: "Your policy",
-                             subtitle: "Scan the declarations page: the summary page of your home insurance. It’s read on your phone and never uploaded.")
+                ScreenHeader(step: 3, title: "Scan your policy")
+                Label("Read on your phone. Never uploaded.", systemImage: "lock.fill")
+                    .font(.wcCaptionStrong).foregroundStyle(Theme.green)
 
                 HStack(spacing: 12) {
                     if VNDocumentCameraViewController.isSupported {
@@ -64,8 +65,6 @@ struct PolicyView: View {
 
                 Card {
                     Text("Discounts already on your policy").font(.wcHeadingSmall).foregroundStyle(Theme.ink)
-                    Text("Turn on any your page lists. If there’s no wind-mitigation section, leave these off.")
-                        .font(.wcSub).foregroundStyle(Theme.muted)
                     Toggle("Hip roof", isOn: binding(\.roofShape, on: .hip, off: .notSure))
                     Toggle("Roof clips or straps", isOn: roofTiesCredited)
                     Toggle("Window protection", isOn: Binding(

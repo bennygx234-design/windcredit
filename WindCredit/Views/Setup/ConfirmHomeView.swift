@@ -10,8 +10,7 @@ struct ConfirmHomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                ScreenHeader(step: "Step 2 of 3", title: "Your home",
-                             subtitle: "Here’s what public records say. Check the four questions below; “Not sure” is fine.")
+                ScreenHeader(step: 2, title: "Your house")
                 if let r = model.saved.record {
                     recordCard(r).reveal(0.05)
                     if r.isCondo { condoNote }
@@ -25,7 +24,7 @@ struct ConfirmHomeView: View {
                     }
                 }
 
-                question("How is the roof tied to the walls?", hint: "It’s on your wind-mitigation report if you’ve had one. Otherwise pick Not sure.") {
+                question("How is the roof tied to the walls?", hint: nil) {
                     ForEach(RoofToWall.allCases) { r in
                         ChoiceCard(title: r.title, detail: r.detail, art: .connection(r), selected: model.saved.home.roofToWall == r) {
                             model.saved.home.roofToWall = r
@@ -42,7 +41,7 @@ struct ConfirmHomeView: View {
                 }
 
                 if !(model.saved.record?.isNewConstruction ?? false) {
-                    question("Was the roof replaced after March 2002?", hint: "A roofing permit from March 1, 2002 on (or an original roof on a 2004+ home) meets the Florida Building Code.") {
+                    question("Was the roof replaced after March 2002?", hint: nil) {
                         ForEach(YesNoUnsure.allCases) { v in
                             ChoiceCard(title: v.title, detail: roofAgeDetail(v),
                                        art: .roofAge(v),
@@ -70,8 +69,8 @@ struct ConfirmHomeView: View {
     }
 
     private var hintText: String? {
-        guard let r = model.saved.record, !r.roofStructureText.isEmpty else { return "Look at your house from the street or the satellite view above." }
-        return "County records say “\(r.roofStructureText.capitalized)”. Check the satellite view above."
+        guard let r = model.saved.record, !r.roofStructureText.isEmpty else { return nil }
+        return "County says: \(r.roofStructureText.capitalized)"
     }
 
     private func recordCard(_ r: PropertyRecord) -> some View {
@@ -86,17 +85,31 @@ struct ConfirmHomeView: View {
             .accessibilityLabel("Satellite view of your roof")
 
             Text(r.displayAddress).font(.wcHeadingSmall).foregroundStyle(Theme.ink)
-            InfoRow(label: "Year built", value: r.yearBuilt.map(String.init) ?? "Not listed")
-            InfoRow(label: "Roof cover", value: r.roofCover == .unknown ? "Not listed" : r.roofCover.title)
-            InfoRow(label: "Living area", value: r.livingArea.map { "\($0.formatted()) sq ft" } ?? "Not listed")
-            InfoRow(label: "Homestead", value: r.homestead ? "Yes" : "No")
-            Text(r.isSample ? "Sample home for testing" : "Source: Palm Beach County Property Appraiser")
-                .font(.wcCaption).foregroundStyle(Theme.muted)
+            HStack(spacing: 8) {
+                stat(r.yearBuilt.map(String.init) ?? "–", "Built")
+                stat(r.roofCover == .unknown ? "–" : r.roofCover.title, "Roof")
+                stat(r.livingArea.map { $0.formatted() } ?? "–", "Sq ft")
+                stat(r.homestead ? "Yes" : "No", "Homestead")
+            }
+            Label(r.isSample ? "Sample home" : "County records", systemImage: "checkmark.circle.fill")
+                .font(.wcCaptionStrong).foregroundStyle(Theme.green)
         }
     }
 
+    private func stat(_ value: String, _ label: String) -> some View {
+        VStack(spacing: 2) {
+            Text(value).font(.wcHeadline).foregroundStyle(Theme.teal)
+                .lineLimit(1).minimumScaleFactor(0.6)
+            Text(label).font(.wcCaption).foregroundStyle(Theme.muted).lineLimit(1).minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10).padding(.horizontal, 4)
+        .background(Theme.mist, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .accessibilityElement(children: .combine)
+    }
+
     private var condoNote: some View {
-        Label("This looks like a condo. Wind discounts usually go on the building’s association policy, so your savings may be smaller.",
+        Label("Condo: savings may be smaller.",
               systemImage: "building.2")
             .font(.wcSub).foregroundStyle(Theme.ink)
             .padding(14)
@@ -115,7 +128,11 @@ struct ConfirmHomeView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title).font(.wcHeading).foregroundStyle(Theme.ink)
                 .fixedSize(horizontal: false, vertical: true)
-            if let hint { Text(hint).font(.wcSub).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true) }
+            if let hint {
+                Text(hint).font(.wcCaptionStrong).foregroundStyle(Theme.tealDeep)
+                    .padding(.horizontal, 10).padding(.vertical, 5)
+                    .background(Theme.mist, in: Capsule())
+            }
             LazyVGrid(columns: columns, spacing: 12) { content() }
         }
     }
