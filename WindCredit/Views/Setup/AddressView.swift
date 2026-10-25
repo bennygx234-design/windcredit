@@ -50,7 +50,8 @@ struct AddressView: View {
                                 Image(systemName: "mappin.circle.fill").font(.system(size: 24)).foregroundStyle(Theme.teal)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(item.title).font(.wcBodyMedium).foregroundStyle(Theme.ink)
-                                    Text(item.subtitle).font(.wcCaption).foregroundStyle(Theme.muted)
+                                    Text(item.subtitle.replacingOccurrences(of: ", United States", with: ""))
+                                        .font(.wcCaption).foregroundStyle(Theme.muted)
                                 }
                                 Spacer()
                             }

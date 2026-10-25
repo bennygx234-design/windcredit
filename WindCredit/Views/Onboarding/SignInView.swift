@@ -9,7 +9,7 @@ struct SignInView: View {
         VStack(alignment: .leading, spacing: 18) {
             Spacer()
             Eyebrow(text: "Your plan is ready")
-            Text("Make it yours")
+            Text(AuthService.isGoogleConfigured ? "Make it yours" : "Save your plan")
                 .font(.wcTitle).foregroundStyle(Theme.ink)
 
             if model.hasSavingsToShow {
@@ -26,23 +26,34 @@ struct SignInView: View {
             }
 
             VStack(alignment: .leading, spacing: 12) {
-                perk("person.text.rectangle", "Your name and email go on the report for your agent")
-                perk("iphone", "Your plan stays on this phone either way")
+                if AuthService.isGoogleConfigured {
+                    perk("person.text.rectangle", "Your name and email go on the report for your agent")
+                }
+                perk("iphone", AuthService.isGoogleConfigured ? "Your plan stays on this phone either way" : "Your plan stays on this phone. Nothing is uploaded")
                 perk("tag", "Free. No ads, no subscriptions")
             }
             .reveal(0.2)
 
             Spacer()
 
-            GoogleSignInPill { Task { await auth.signInWithGoogle() } }
-                .reveal(0.3)
+            // A sign-in button that only says "not set up" looks broken in a demo, so it only
+            // appears once a Google client ID is in Config.xcconfig.
+            if AuthService.isGoogleConfigured {
+                GoogleSignInPill { Task { await auth.signInWithGoogle() } }
+                    .reveal(0.3)
 
-            Button("Skip, keep it on this phone") { auth.continueWithoutAccount() }
-                .font(.wcBodyMedium)
-                .foregroundStyle(Theme.muted)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 6)
-                .accessibilityIdentifier("noAccount")
+                Button("Skip, keep it on this phone") { auth.continueWithoutAccount() }
+                    .font(.wcBodyMedium)
+                    .foregroundStyle(Theme.muted)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                    .accessibilityIdentifier("noAccount")
+            } else {
+                Button("Save my plan") { auth.continueWithoutAccount() }
+                    .buttonStyle(PrimaryButtonStyle(color: Theme.coral))
+                    .reveal(0.3)
+                    .accessibilityIdentifier("noAccount")
+            }
         }
         .padding(.horizontal, 24)
         .padding(.bottom, 8)

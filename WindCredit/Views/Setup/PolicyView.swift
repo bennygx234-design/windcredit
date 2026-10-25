@@ -117,9 +117,9 @@ struct PolicyView: View {
 
     private func load() {
         draft = model.saved.policy
-        premiumText = draft.totalPremium.map { String(Int($0)) } ?? ""
-        windText = draft.hurricanePremium.map { String(Int($0)) } ?? ""
-        dwellingText = draft.dwellingCoverage.map { String(Int($0)) } ?? ""
+        premiumText = draft.totalPremium.map(Self.grouped) ?? ""
+        windText = draft.hurricanePremium.map(Self.grouped) ?? ""
+        dwellingText = draft.dwellingCoverage.map(Self.grouped) ?? ""
         if let r = draft.renewalDate { renewal = r; hasRenewal = true }
     }
 
@@ -131,9 +131,9 @@ struct PolicyView: View {
         let parsed = PolicyParser.parse(lines: lines)
         draft.creditedFeatures = parsed.creditedFeatures
         draft.noMitigationSectionFound = parsed.noMitigationSectionFound
-        if let v = parsed.totalPremium { premiumText = String(Int(v)) }
-        if let v = parsed.hurricanePremium { windText = String(Int(v)) }
-        if let v = parsed.dwellingCoverage { dwellingText = String(Int(v)) }
+        if let v = parsed.totalPremium { premiumText = Self.grouped(v) }
+        if let v = parsed.hurricanePremium { windText = Self.grouped(v) }
+        if let v = parsed.dwellingCoverage { dwellingText = Self.grouped(v) }
         if let d = parsed.renewalDate { renewal = d; hasRenewal = true }
         scanned = true
         let found = [parsed.totalPremium, parsed.hurricanePremium, parsed.dwellingCoverage].compactMap { $0 }.count
@@ -144,9 +144,9 @@ struct PolicyView: View {
 
     private func useSample() {
         let p = AppModel.samplePolicy
-        premiumText = String(Int(p.totalPremium ?? 0))
-        windText = String(Int(p.hurricanePremium ?? 0))
-        dwellingText = String(Int(p.dwellingCoverage ?? 0))
+        premiumText = Self.grouped(p.totalPremium ?? 0)
+        windText = Self.grouped(p.hurricanePremium ?? 0)
+        dwellingText = Self.grouped(p.dwellingCoverage ?? 0)
         if let d = p.renewalDate { renewal = d; hasRenewal = true }
         draft.creditedFeatures = MitigationFeatures()
         scanned = true
@@ -165,6 +165,9 @@ struct PolicyView: View {
         model.finishPolicy(draft)
         next()
     }
+
+    /// 385000 → "385,000" (number(_:) strips the commas again).
+    static func grouped(_ v: Double) -> String { Int(v.rounded()).formatted(.number.grouping(.automatic)) }
 
     static func number(_ s: String) -> Double? {
         Double(s.filter { $0.isNumber || $0 == "." })

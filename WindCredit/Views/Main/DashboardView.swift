@@ -132,7 +132,15 @@ struct DashboardView: View {
     // MARK: Neighborhood (civic view)
 
     @ViewBuilder private var neighborhoodCard: some View {
-        if let n = model.saved.neighborhood, n.homes > 0, let r = model.saved.record {
+        if model.saved.neighborhood == nil && model.loadingNeighborhood {
+            Card {
+                Eyebrow(text: "Your neighborhood", color: Theme.tealDeep)
+                HStack(spacing: 10) {
+                    ProgressView()
+                    Text("Checking homes on your street…").font(.wcSub).foregroundStyle(Theme.muted)
+                }
+            }
+        } else if let n = model.saved.neighborhood, n.homes > 0, let r = model.saved.record {
             Card {
                 Eyebrow(text: "Your neighborhood", color: Theme.tealDeep)
                 HStack(alignment: .firstTextBaseline, spacing: 10) {
